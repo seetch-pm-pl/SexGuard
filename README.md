@@ -8,14 +8,11 @@
 
 ## English (need help with translation).
 
-This plugin works only on PHP >= 7.0 and PocketMine-MP server software or any fork of it. We guarantee support both new and old versions.
+This plugin works only on PHP 8.0 and PocketMine-MP server software. We guarantee support both new and old versions.
 
-### Tested on:
+### Compatible with:
 
-- [x] **PocketMine-MP (API 2.0.0 - 3.0.0-ALPHA12)**
-- [x] **GenisysPro**
-- [x] **Leveryl**
-- [x] **Tesseract**
+- [x] **PocketMine-MP (API 4.0.0)**
 
 ### Features:
 
@@ -41,14 +38,11 @@ Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ
 
 ## Русский.
 
-Для работы плагина необходим PHP >= 7.0 и сервер PocketMine-MP или любой из его форков. Гарантирована поддержка как новых, так и старых версий.
+Для работы плагина необходим PHP 8.0 и сервер PocketMine-MP. Гарантирована поддержка как новых, так и старых версий.
 
-### Протестировано на:
+### Совместим с:
 
-- [x] **PocketMine-MP (API 2.0.0 - 3.0.0-ALPHA12)**
-- [x] **GenisysPro**
-- [x] **Leveryl**
-- [x] **Tesseract**
+- [x] **PocketMine-MP (API 4.0.0)**
 
 ### Особенности:
 
@@ -65,7 +59,3 @@ Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ
 `sexguard.command.rg` | Доступ к основной команде /rg. | Для всех игроков.
 `sexguard.noflag` | Игнорирование всех флагов. | Для операторов.
 `sexguard.all` | Полный доступ. | Для операторов.
-
-### Нужна помощь?
-
-Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ

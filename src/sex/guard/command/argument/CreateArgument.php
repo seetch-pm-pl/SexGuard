@@ -1,6 +1,9 @@
 <?php namespace sex\guard\command\argument;
 
 
+use pocketmine\player\Player;
+use pocketmine\world\Position;
+
 /**
  *  _    _       _                          _  ____
  * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
@@ -12,12 +15,6 @@
  * @link   http://universalcrew.ru
  *
  */
-use sex\guard\command\argument\Argument;
-
-
-use pocketmine\level\Position;
-use pocketmine\Player;
-
 
 class CreateArgument extends Argument
 {
@@ -109,8 +106,8 @@ class CreateArgument extends Argument
 			$y = [ 0, 256 ];
 		}
 
-		$min = new Position($x[0], $y[0], $z[0], $pos1->getLevel());
-		$max = new Position($x[1], $y[1], $z[1], $pos2->getLevel());
+		$min = new Position($x[0], $y[0], $z[0], $pos1->getWorld());
+		$max = new Position($x[1], $y[1], $z[1], $pos2->getWorld());
 
 		$override = $main->getOverride($min, $max);
 

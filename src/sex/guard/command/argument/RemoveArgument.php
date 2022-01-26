@@ -12,10 +12,6 @@
  * @link   http://universalcrew.ru
  *
  */
-use sex\guard\command\argument\Argument;
-
-
-use pocketmine\Player;
 
 
 class RemoveArgument extends Argument
@@ -36,7 +32,7 @@ class RemoveArgument extends Argument
 	 *
 	 * @return bool
 	 */
-	function execute( Player $sender, array $args ): bool
+	function execute( Player|\pocketmine\player\Player $sender, array $args ): bool
 	{
 		$nick = strtolower($sender->getName());
 		$main = $this->getManager();

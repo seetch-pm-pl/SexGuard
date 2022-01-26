@@ -12,6 +12,8 @@
  * @link   https://vk.com/infernopage
  *
  */
+
+use pocketmine\event\CancellableTrait;
 use sex\guard\Manager;
 use sex\guard\data\Region;
 use sex\guard\event\RegionEvent;
@@ -25,7 +27,7 @@ class RegionMemberChangeEvent extends RegionEvent implements Cancellable
 	const TYPE_REMOVE = 1;
 
 
-	static $handlerList = null;
+	use CancellableTrait;
 
 
 	/**

@@ -1,6 +1,9 @@
 <?php namespace sex\guard\command\argument;
 
 
+use pocketmine\player\Player;
+use pocketmine\world\Position;
+
 /**
  *  _    _       _                          _  ____
  * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
@@ -12,11 +15,6 @@
  * @link   http://universalcrew.ru
  *
  */
-use sex\guard\command\argument\Argument;
-
-
-use pocketmine\level\Position;
-use pocketmine\Player;
 
 
 class PositionArgument extends Argument
@@ -49,10 +47,10 @@ class PositionArgument extends Argument
 		}
 		
 		$pos = new Position(
-			$sender->getFloorX(),
-			$sender->getFloorY(),
-			$sender->getFloorZ(),
-			$sender->getLevel()
+			$sender->getPosition()->getFloorX(),
+			$sender->getPosition()->getFloorY(),
+			$sender->getPosition()->getFloorZ(),
+			$sender->getWorld()
 		);
 
 		$region = $main->getRegion($pos);
@@ -87,7 +85,7 @@ class PositionArgument extends Argument
 				return FALSE;
 			}
 			
-			if( $main->position[0][$nick]->getLevel()->getName() != $sender->getLevel()->getName() )
+			if( $main->position[0][$nick]->getWorld()->getFolderName() != $sender->getWorld()->getFolderName() )
 			{
 				unset($main->position[0][$nick]);
 				$sender->sendMessage($main->getValue('pos_another_world'));

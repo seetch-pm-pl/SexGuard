@@ -12,13 +12,15 @@
  * @link   https://vk.com/infernopage
  *
  */
+
+use pocketmine\event\CancellableTrait;
 use sex\guard\Manager;
 use sex\guard\data\Region;
 use sex\guard\event\RegionEvent;
 
 class RegionLoadEvent extends RegionEvent
 {
-	static $handlerList = null;
+	use CancellableTrait;
 
 
 	/**

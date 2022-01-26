@@ -12,17 +12,19 @@
  * @link   https://vk.com/infernopage
  *
  */
+
+use pocketmine\event\CancellableTrait;
 use sex\guard\Manager;
 use sex\guard\data\Region;
 use sex\guard\event\RegionEvent;
 
 use pocketmine\event\Cancellable;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 
 class FlagIgnoreEvent extends FlagCheckEvent implements Cancellable
 {
-	static $handlerList = null;
+	use CancellableTrait;
 
 
 	/**

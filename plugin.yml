@@ -8,25 +8,8 @@
 ###
 name: SexGuard
 main: sex\guard\Manager
-version: 1.1.9
-api:
-- 1.0.0
-- 2.0.0
-- 3.0.0
-- 3.0.0-ALPHA
-- 3.0.0-ALPHA1
-- 3.0.0-ALPHA2
-- 3.0.0-ALPHA3
-- 3.0.0-ALPHA4
-- 3.0.0-ALPHA5
-- 3.0.0-ALPHA6
-- 3.0.0-ALPHA7
-- 3.0.0-ALPHA8
-- 3.0.0-ALPHA9
-- 3.0.0-ALPHA10
-- 3.0.0-ALPHA11
-- 3.0.0-ALPHA12
-- 4.0.0
+version: 1.2.0
+api: 4.0.0
 
 author: sex_KAMAZ
 website: https://vk.com/infernopage
@@ -34,4 +17,16 @@ website: https://vk.com/infernopage
 load: POSTWORLD
 
 commands:
-  rg: []
+  rg:
+    description: 'Показывает помощь или список команд управления регионами'
+    permission: 'sexguard.command.rg'
+
+permissions:
+  sexguard.command.rg:
+    default: true
+  sexguard.noflag:
+    description: 'Игнорирование флагов внутри регионов'
+    default: op
+  sexguard.all:
+    description: 'Доступ ко всем функциям sexGuard'
+    default: op

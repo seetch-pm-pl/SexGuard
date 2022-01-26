@@ -12,15 +12,19 @@
  * @link   http://universalcrew.ru
  *
  */
+
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\ItemFrame;
+use pocketmine\block\utils\SignText;
+use pocketmine\network\mcpe\protocol\ItemFrameDropItemPacket;
 use sex\guard\Manager;
 use sex\guard\event\flag\FlagIgnoreEvent;
 use sex\guard\event\flag\FlagCheckByBlockEvent;
 use sex\guard\event\flag\FlagCheckByPlayerEvent;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\tile\ItemFrame;
 
 use pocketmine\event\Listener;
 use pocketmine\event\block\SignChangeEvent;
@@ -75,11 +79,13 @@ class BlockGuard implements Listener
 		
 		if( $this->isFlagDenied($block, 'place', $player) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 			return;
 		}
 
-		$line = $event->getLines();
+		$origSign = $event->getSign();
+
+		$line = $origSign->getText()->getLines();
 		$list = ['sell rg', 'rg sell', 'region sell', 'sell region'];
 
 		if( !in_array($line[0], $list) or intval($line[1]) <= 0 )
@@ -94,7 +100,7 @@ class BlockGuard implements Listener
 			return;
 		}
 		
-		$region = $api->getRegion($block);
+		$region = $api->getRegion($block->getPosition());
 
 		if( !isset($region) )
 		{
@@ -115,7 +121,7 @@ class BlockGuard implements Listener
 		{
 			$pos = $sign['pos'];
 
-			if( $pos[0] != $block->getX() or $pos[1] != $block->getY() or $pos[2] != $block->getZ() )
+			if( $pos[0] != $block->getPosition()->getX() or $pos[1] != $block->getPosition()->getY() or $pos[2] != $block->getPosition()->getZ() )
 			{
 				$api->sendWarning($player, $api->getValue('sell_exist'));
 				return;
@@ -128,18 +134,18 @@ class BlockGuard implements Listener
 		{
 			$text = str_replace('{region}', $rname, $api->getValue('sell_text_'.($i + 1)));
 			$text = str_replace('{price}',  $price, $text);
-			
-			$event->setLine($i, $text);
+
+			$origSign->setText(new SignText([$i, $text]));
 		}
 		
 		$data = [
-			'pos'   => [$block->getX(), $block->getY(), $block->getZ()],
-			'level' => $block->getLevel()->getName(),
+			'pos'   => [$block->getPosition()->getX(), $block->getPosition()->getY(), $block->getPosition()->getZ()],
+			'level' => $block->getPosition()->getWorld()->getFolderName(),
 			'price' => $price
 		];
 
 		$api->sign->set($rname, $data);
-		$api->sign->save(TRUE);
+		$api->sign->save();
 	}
 
 
@@ -163,17 +169,17 @@ class BlockGuard implements Listener
 
 		if( $this->isFlagDenied($block, 'break', $player) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 			return;
 		}
 
-		if( $block->getId() == Block::CHEST and $this->isFlagDenied($block, 'chest', $player) )
+		if( $block->getId() == BlockLegacyIds::CHEST and $this->isFlagDenied($block, 'chest', $player) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 			return;
 		}
 
-		if( $block->getId() != Block::SIGN_POST and $block->getId() != Block::WALL_SIGN )
+		if( $block->getId() != BlockLegacyIds::SIGN_POST and $block->getId() != BlockLegacyIds::WALL_SIGN )
 		{
 			return;
 		}
@@ -187,10 +193,10 @@ class BlockGuard implements Listener
 				$pos = new Vector3($data['pos'][0], $data['pos'][1], $data['pos'][2]);
 				$lvl = $data['level'];
 				
-				if( $block->equals($pos) and $block->getLevel()->getName() == $lvl )
+				if( $block->getPosition()->equals($pos) and $block->getPosition()->getWorld()->getFolderName() == $lvl )
 				{
 					$api->sign->remove($name);
-					$api->sign->save(TRUE);
+					$api->sign->save();
 				}
 			}
 		}
@@ -217,7 +223,7 @@ class BlockGuard implements Listener
 		
 		if( $this->isFlagDenied($block, 'place', $player) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -241,7 +247,7 @@ class BlockGuard implements Listener
 		
 		if( $this->isFlagDenied($block, 'decay') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -249,7 +255,7 @@ class BlockGuard implements Listener
 	/**
 	 * @internal break flag.
 	 *
-	 * @param    DataPacketRecieveEvent $event
+	 * @param    DataPacketReceiveEvent $event
 	 *
 	 * @priority        NORMAL
 	 * @ignoreCancelled TRUE
@@ -258,30 +264,27 @@ class BlockGuard implements Listener
 	{
 		$pk = $event->getPacket();
 
-		if( $pk->getName() != 'ItemFrameDropItemPacket' )
+		if( $pk instanceof ItemFrameDropItemPacket)
 		{
-			return;
-		}
+			$player = $event->getOrigin()->getPlayer();
+			$tile   = $player->getPosition()->getWorld()->getTile($pk->blockPosition);
 
-		$player = $event->getPlayer();
-		$tile   = $player->getLevel()->getTile(new Vector3($pk->x, $pk->y, $pk->z));
+			if( !($tile instanceof ItemFrame) )
+			{
+				return;
+			}
 
-		if( !($tile instanceof ItemFrame) )
-		{
-			return;
-		}
+			$block = $tile->getFramedItem()->getBlock();
 
-		if( $tile->getLevel() === null )
-		{
-			return;
-		}
+			if( $block->getPosition() === null )
+			{
+				return;
+			}
 
-		$block = $tile->getBlock();
-
-		if( $this->isFlagDenied($block, 'frame', $player) )
-		{
-			$event->setCancelled();
-			$tile->spawnTo($player);
+			if( $this->isFlagDenied($block, 'frame', $player) )
+			{
+				$event->cancel();
+			}
 		}
 	}
 
@@ -305,7 +308,7 @@ class BlockGuard implements Listener
 			}
 		}
 
-		$region = $api->getRegion($block);
+		$region = $api->getRegion($block->getPosition());
 
 		if( !isset($region) )
 		{
@@ -334,7 +337,7 @@ class BlockGuard implements Listener
 
 		$event = new FlagCheckByBlockEvent($api, $region, $flag, $block, $player);
 
-		$api->getServer()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -351,7 +354,7 @@ class BlockGuard implements Listener
 				{
 					$event = new FlagIgnoreEvent($api, $region, $flag, $player);
 
-					$api->getServer()->getPluginManager()->callEvent($event);
+					$event->call();
 
 					if( $event->isCancelled() )
 					{
@@ -376,7 +379,7 @@ class BlockGuard implements Listener
 			{
 				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $block);
 
-				$api->getServer()->getPluginManager()->callEvent($event);
+				$event->call();
 
 				if( $event->isCancelled() )
 				{
@@ -385,7 +388,7 @@ class BlockGuard implements Listener
 
 				if( $flag == 'break' )
 				{
-					$pos    = $player->subtract($block);
+					$pos    = $player->getPosition()->subtract($block->getPosition()->getX(), $block->getPosition()->getY(), $block->getPosition()->getZ());
 					$pos->y = abs($pos->y + 2);
 					$pos    = $pos->divide(8);
 

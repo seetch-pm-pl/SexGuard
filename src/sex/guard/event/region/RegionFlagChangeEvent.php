@@ -12,6 +12,8 @@
  * @link   https://vk.com/infernopage
  *
  */
+
+use pocketmine\event\CancellableTrait;
 use sex\guard\Manager;
 use sex\guard\data\Region;
 use sex\guard\event\RegionEvent;
@@ -21,7 +23,7 @@ use pocketmine\event\Cancellable;
 
 class RegionFlagChangeEvent extends RegionEvent implements Cancellable
 {
-	static $handlerList = null;
+	use CancellableTrait;
 
 
 	/**

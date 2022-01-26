@@ -12,11 +12,9 @@
  * @link   http://universalcrew.ru
  *
  */
-use sex\guard\command\argument\Argument;
 
-
-use pocketmine\item\Item;
-use pocketmine\Player;
+use pocketmine\item\VanillaItems;
+use pocketmine\player\Player;
 
 
 class WandArgument extends Argument
@@ -40,7 +38,7 @@ class WandArgument extends Argument
 	function execute( Player $sender, array $args ): bool
 	{
 		$main = $this->getManager();
-		$wand = Item::get(Item::WOODEN_AXE);
+		$wand = VanillaItems::WOODEN_AXE();
 
 		if( !$sender->getInventory()->canAddItem($wand) )
 		{
