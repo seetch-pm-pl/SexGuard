@@ -30,10 +30,6 @@ Permission | Description | Default
 `sexguard.noflag` | Ignore region flags. | OP.
 `sexguard.all` | Full access. | OP.
 
-### Need help?
-
-Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ
-
 <a name="RUS"></a>
 
 ## Русский.
