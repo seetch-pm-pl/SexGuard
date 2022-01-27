@@ -445,7 +445,8 @@ class PlayerGuard implements Listener
 		}
 
 		$api    = $this->api;
-		$region = $api->getRegion($block->getPosition() ?? $player->getPosition());
+
+		$region = $api->getRegion($player->getPosition() ?? $block->getPosition() );
 		
 		if( !isset($region) )
 		{
