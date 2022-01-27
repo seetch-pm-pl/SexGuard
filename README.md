@@ -8,7 +8,7 @@
 
 ## English (need help with translation).
 
-This plugin works only on PHP 8.0 and PocketMine-MP server software. We guarantee support both new and old versions.
+This plugin works only on PHP 8.0 and PocketMine-MP server software.
 
 ### Compatible with:
 
@@ -34,7 +34,7 @@ Permission | Description | Default
 
 ## Русский.
 
-Для работы плагина необходим PHP 8.0 и сервер PocketMine-MP. Гарантирована поддержка как новых, так и старых версий.
+Для работы плагина необходим PHP 8.0 и сервер PocketMine-MP.
 
 ### Совместим с:
 
