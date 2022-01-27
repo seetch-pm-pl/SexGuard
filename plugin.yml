@@ -8,7 +8,7 @@
 ###
 name: SexGuard
 main: sex\guard\Manager
-version: 1.2.0
+version: 1.2.1
 api: 4.0.0
 
 author: sex_KAMAZ

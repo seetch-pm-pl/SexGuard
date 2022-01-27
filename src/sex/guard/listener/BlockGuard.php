@@ -75,7 +75,7 @@ class BlockGuard implements Listener
 		}
 
 		$player = $event->getPlayer();
-		$block  = $event->getBlock();
+		$block  = $event->getSign();
 		
 		if( $this->isFlagDenied($block, 'place', $player) )
 		{
@@ -83,9 +83,8 @@ class BlockGuard implements Listener
 			return;
 		}
 
-		$origSign = $event->getSign();
+		$line = $event->getNewText()->getLines();
 
-		$line = $origSign->getText()->getLines();
 		$list = ['sell rg', 'rg sell', 'region sell', 'sell region'];
 
 		if( !in_array($line[0], $list) or intval($line[1]) <= 0 )
@@ -101,6 +100,7 @@ class BlockGuard implements Listener
 		}
 		
 		$region = $api->getRegion($block->getPosition());
+
 
 		if( !isset($region) )
 		{
@@ -130,13 +130,16 @@ class BlockGuard implements Listener
 		
 		$price = intval($line[1]);
 
+		$lines = [];
 		for( $i = 0; $i < 4; $i++ )
 		{
 			$text = str_replace('{region}', $rname, $api->getValue('sell_text_'.($i + 1)));
 			$text = str_replace('{price}',  $price, $text);
 
-			$origSign->setText(new SignText([$i, $text]));
+			$lines[$i] = $text;
 		}
+
+		$event->setNewText(new SignText($lines));
 		
 		$data = [
 			'pos'   => [$block->getPosition()->getX(), $block->getPosition()->getY(), $block->getPosition()->getZ()],
