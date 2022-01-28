@@ -1,6 +1,6 @@
 ![SexGuard](https://raw.githubusercontent.com/universalcrew/SexGuard/master/sexguard.jpg)
 
-[![Poggit-CI](https://poggit.pmmp.io/ci.badge/universalcrew/SexGuard/SexGuard)](https://poggit.pmmp.io/ci/universalcrew/SexGuard/SexGuard)
+[![Poggit-CI](https://poggit.pmmp.io/ci.badge/seetch-pm-pl/SexGuard/~)](https://poggit.pmmp.io/ci/seetch-pm-pl/SexGuard/~)
 
 # Language: [English](#ENG) | [Русский](#RUS)
 
@@ -8,14 +8,11 @@
 
 ## English (need help with translation).
 
-This plugin works only on PHP >= 7.0 and PocketMine-MP server software or any fork of it. We guarantee support both new and old versions.
+This plugin works only on PHP 8.0 and PocketMine-MP server software.
 
-### Tested on:
+### Compatible with:
 
-- [x] **PocketMine-MP (API 2.0.0 - 3.0.0-ALPHA12)**
-- [x] **GenisysPro**
-- [x] **Leveryl**
-- [x] **Tesseract**
+- [x] **PocketMine-MP (API 4.0.0)**
 
 ### Features:
 
@@ -33,22 +30,15 @@ Permission | Description | Default
 `sexguard.noflag` | Ignore region flags. | OP.
 `sexguard.all` | Full access. | OP.
 
-### Need help?
-
-Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ
-
 <a name="RUS"></a>
 
 ## Русский.
 
-Для работы плагина необходим PHP >= 7.0 и сервер PocketMine-MP или любой из его форков. Гарантирована поддержка как новых, так и старых версий.
+Для работы плагина необходим PHP 8.0 и сервер PocketMine-MP.
 
-### Протестировано на:
+### Совместим с:
 
-- [x] **PocketMine-MP (API 2.0.0 - 3.0.0-ALPHA12)**
-- [x] **GenisysPro**
-- [x] **Leveryl**
-- [x] **Tesseract**
+- [x] **PocketMine-MP (API 4.0.0)**
 
 ### Особенности:
 
@@ -65,7 +55,3 @@ Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ
 `sexguard.command.rg` | Доступ к основной команде /rg. | Для всех игроков.
 `sexguard.noflag` | Игнорирование всех флагов. | Для операторов.
 `sexguard.all` | Полный доступ. | Для операторов.
-
-### Нужна помощь?
-
-Telegram: https://t.me/joinchat/EbZB3BKGfstWw6UwYaBKHQ

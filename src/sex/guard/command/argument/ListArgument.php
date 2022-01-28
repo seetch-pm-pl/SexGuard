@@ -1,6 +1,8 @@
 <?php namespace sex\guard\command\argument;
 
 
+use pocketmine\player\Player;
+
 /**
  *  _    _       _                          _  ____
  * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
@@ -12,11 +14,6 @@
  * @link   http://universalcrew.ru
  *
  */
-use sex\guard\command\argument\Argument;
-
-
-use pocketmine\item\Item;
-use pocketmine\Player;
 
 
 class ListArgument extends Argument

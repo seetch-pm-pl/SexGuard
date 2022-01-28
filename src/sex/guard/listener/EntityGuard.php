@@ -16,7 +16,7 @@ use sex\guard\Manager;
 use sex\guard\event\flag\FlagIgnoreEvent;
 use sex\guard\event\flag\FlagCheckByEntityEvent;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\entity\Entity;
 use pocketmine\entity\projectile\Arrow;
 
@@ -84,7 +84,7 @@ class EntityGuard implements Listener
 
 			if( $this->isFlagDenied($damager, $flag, $entity) )
 			{
-				$event->setCancelled();
+				$event->cancel();
 			}
 
 			return;
@@ -92,7 +92,7 @@ class EntityGuard implements Listener
 
 		if( $this->isFlagDenied($entity, 'damage') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -144,7 +144,7 @@ class EntityGuard implements Listener
 		
 		if( $this->isFlagDenied($entity, 'combust') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -192,7 +192,7 @@ class EntityGuard implements Listener
 		
 		if( $this->isFlagDenied($entity, 'teleport') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -216,7 +216,7 @@ class EntityGuard implements Listener
 		
 		if( $this->isFlagDenied($entity, 'change') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -235,7 +235,7 @@ class EntityGuard implements Listener
 
 		if( isset($target) )
 		{
-			$region = $api->getRegion($target);
+			$region = $api->getRegion($target->getPosition());
 			
 			if( isset($region) and !$region->getFlagValue($flag) )
 			{
@@ -243,7 +243,7 @@ class EntityGuard implements Listener
 			}
 		}
 
-		$region = $api->getRegion($entity);
+		$region = $api->getRegion($entity->getPosition());
 
 		if( !isset($region) )
 		{
@@ -260,7 +260,7 @@ class EntityGuard implements Listener
 				{
 					$event = new FlagIgnoreEvent($api, $region, $flag, $entity);
 
-					$api->getServer()->getPluginManager()->callEvent($event);
+					$event->call();
 
 					if( $event->isCancelled() )
 					{
@@ -276,7 +276,7 @@ class EntityGuard implements Listener
 		{
 			$event = new FlagCheckByEntityEvent($api, $region, $flag, $entity, $target);
 
-			$api->getServer()->getPluginManager()->callEvent($event);
+			$event->call();
 
 			if( $event->isCancelled() )
 			{

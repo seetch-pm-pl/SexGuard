@@ -15,7 +15,7 @@
 use sex\guard\Manager;
 
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 
 abstract class Argument

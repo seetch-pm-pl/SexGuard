@@ -12,6 +12,8 @@
  * @link   http://universalcrew.ru
  *
  */
+
+use pocketmine\world\World;
 use sex\guard\Manager;
 
 use sex\guard\event\region\RegionLoadEvent;
@@ -20,7 +22,6 @@ use sex\guard\event\region\RegionFlagChangeEvent;
 use sex\guard\event\region\RegionOwnerChangeEvent;
 use sex\guard\event\region\RegionMemberChangeEvent;
 
-use pocketmine\level\Level;
 use pocketmine\Server;
 
 
@@ -52,7 +53,7 @@ class Region
 
 		$event = new RegionLoadEvent(Manager::getInstance(), $this);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 	}
 
 
@@ -70,7 +71,7 @@ class Region
 	{
 		$event = new RegionMemberChangeEvent(Manager::getInstance(), $this, $nick, RegionMemberChangeEvent::TYPE_ADD);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -97,7 +98,7 @@ class Region
 	{
 		$event = new RegionMemberChangeEvent(Manager::getInstance(), $this, $nick, RegionMemberChangeEvent::TYPE_REMOVE);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -118,7 +119,7 @@ class Region
 	{
 		$event = new RegionOwnerChangeEvent(Manager::getInstance(), $this, $this->property['owner'], $nick);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -139,7 +140,7 @@ class Region
 	{
 		$event = new RegionFlagChangeEvent(Manager::getInstance(), $this, $flag, $value);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -207,11 +208,11 @@ class Region
 
 
 	/**
-	 * @return Level | NULL
+	 * @return World | NULL
 	 */
 	function getLevel( )
 	{
-		return Server::getInstance()->getLevelByName($this->property['level']);
+		return Server::getInstance()->getWorldManager()->getWorldByName($this->property['level']);
 	}
 
 
@@ -244,7 +245,7 @@ class Region
 	{
 		$event = new RegionSaveEvent(Manager::getInstance(), $this);
 
-		Server::getInstance()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{

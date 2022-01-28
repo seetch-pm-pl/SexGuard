@@ -12,23 +12,23 @@
  * @link   http://universalcrew.ru
  *
  */
+
+use pocketmine\permission\PermissionManager;
+use pocketmine\world\Position;
+use sex\guard\command\GuardCommand;
 use sex\guard\data\Region;
 
 use sex\guard\listener\BlockGuard;
 use sex\guard\listener\EntityGuard;
 use sex\guard\listener\PlayerGuard;
 
-use sex\guard\command\OldGuardCommand;
-use sex\guard\command\NewGuardCommand;
-
 use sex\guard\event\region\RegionCreateEvent;
 use sex\guard\event\region\RegionRemoveEvent;
 
 use pocketmine\permission\Permission;
 use pocketmine\plugin\PluginBase;
-use pocketmine\level\Position;
 use pocketmine\utils\Config;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 /**
  * @todo throw exceptions in production isn't a good practice.
@@ -109,15 +109,14 @@ class Manager extends PluginBase
 	public $sign;
 
 
-	function onLoad( )
+	protected function onLoad( ) : void
 	{
 		$this->loadInstance();
 	}
 
 
-	function onEnable( )
+	protected function onEnable( ) : void
 	{
-		$this->initPermission();
 		$this->initProvider();
 
 		if( $this->getValue('sign', 'config') !== self::CONFIGURATION_SIGN )
@@ -134,7 +133,7 @@ class Manager extends PluginBase
 	/**
 	 * @todo data stores can be deleted by user.
 	 */
-	function onDisable( )
+	protected function onDisable( )  : void
 	{
 		$this->region->save();
 		$this->sign->save();
@@ -157,9 +156,9 @@ class Manager extends PluginBase
 	 */
 	function getOverride( Position $min, Position $max ): array
 	{
-		$level = $min->getLevel()->getName();
+		$level = $min->getWorld()->getFolderName();
 
-		if( $level != $max->getLevel()->getName() )
+		if( $level != $max->getWorld()->getFolderName() )
 		{
 			return [];
 		}
@@ -200,7 +199,7 @@ class Manager extends PluginBase
 	 */
 	function getRegion( Position $pos )
 	{
-		$level = $pos->getLevel()->getName();
+		$level = $pos->getWorld()->getFolderName();
 
 		if( !isset($this->data[$level]) )
 		{
@@ -251,9 +250,9 @@ class Manager extends PluginBase
 	{
 		$name = strtolower($name);
 
-		foreach( $this->getServer()->getLevels() as $level )
+		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
 		{
-			$level = $level->getName();
+			$level = $level->getFolderName();
 
 			if( !isset($this->data[$level]) )
 			{
@@ -290,7 +289,7 @@ class Manager extends PluginBase
 	 */
 	function createRegion( string $nick, string $name, Position $min, Position $max )
 	{
-		$level = $min->getLevel()->getName();
+		$level = $min->getWorld()->getFolderName();
 		$nick  = strtolower($nick);
 		$name  = strtolower($name);
 
@@ -320,7 +319,7 @@ class Manager extends PluginBase
 		$region = new Region($name, $data);
 		$event  = new RegionCreateEvent($this, $region);
 
-		$this->getServer()->getPluginManager()->callEvent($event);
+		$event->call();
 
 		if( $event->isCancelled() )
 		{
@@ -344,9 +343,9 @@ class Manager extends PluginBase
 	{
 		$name = strtolower($name);
 
-		foreach( $this->getServer()->getLevels() as $level )
+		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
 		{
-			$level = $level->getName();
+			$level = $level->getFolderName();
 
 			if( !isset($this->data[$level]) )
 			{
@@ -369,7 +368,7 @@ class Manager extends PluginBase
 
 				$event = new RegionRemoveEvent($this, $rg);
 
-				$this->getServer()->getPluginManager()->callEvent($event);
+				$event->call();
 
 				if( $event->isCancelled() )
 				{
@@ -381,7 +380,7 @@ class Manager extends PluginBase
 				$this->data[$level] = array_values($this->data[$level]);
 
 				$this->region->remove($name);
-				$this->region->save(TRUE);
+				$this->region->save();
 
 				unset($data); return TRUE;
 			}
@@ -402,9 +401,9 @@ class Manager extends PluginBase
 		$nick = strtolower($nick);
 		$arr  = [];
 
-		foreach( $this->getServer()->getLevels() as $level )
+		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
 		{
-			$level = $level->getName();
+			$level = $level->getFolderName();
 
 			if( !isset($this->data[$level]) )
 			{
@@ -617,20 +616,6 @@ class Manager extends PluginBase
 	}
 
 
-	private function initPermission( )
-	{
-		$list = [
-			new Permission('sexguard.noflag', 'Игнорирование флагов внутри регионов', Permission::DEFAULT_OP),
-			new Permission('sexguard.all', 'Доступ ко всем функциям sexGuard', Permission::DEFAULT_OP)
-		];
-
-		foreach( $list as $permission )
-		{
-			$this->getServer()->getPluginManager()->addPermission($permission);
-		}
-	}
-
-
 	private function initProvider( )
 	{
 		$folder = $this->getDataFolder();
@@ -684,15 +669,7 @@ class Manager extends PluginBase
 
 	private function initCommand( )
 	{
-		try
-		{
-			$command = new OldGuardCommand($this);
-		}
-
-		catch( Exception $exception )
-		{
-			$command = new NewGuardCommand($this);
-		}
+		$command = new GuardCommand($this);
 
 		$map     = $this->getServer()->getCommandMap();
 		$replace = $map->getCommand($command->getName());

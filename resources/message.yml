@@ -155,7 +155,7 @@ rg_info: "§l§e- §fРЕГИОН §e- {region} | §e- §fВЛАДЕЛЕЦ §e- 
 # ТЕКСТ ТАБЛИЧКИ ПРОДАЖИ:
 # {region} - название региона
 # {price} - цена
-sell_text_1: "§l§eПродается регион:§r"
+sell_text_1: "§l§eПродается:§r"
 sell_text_2: "§f{region}"
 sell_text_3: "§l§eЦена:§r"
 sell_text_4: "§f{price}"

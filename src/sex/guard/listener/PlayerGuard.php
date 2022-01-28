@@ -12,15 +12,18 @@
  * @link   http://universalcrew.ru
  *
  */
+
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\VanillaBlocks;
+use pocketmine\item\ItemIds;
+use pocketmine\player\Player;
 use sex\guard\Manager;
 use sex\guard\event\flag\FlagIgnoreEvent;
 use sex\guard\event\flag\FlagCheckByPlayerEvent;
 
-use pocketmine\Player;
 use pocketmine\item\Item;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\level\Position;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -96,7 +99,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, 'chat') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -126,7 +129,7 @@ class PlayerGuard implements Listener
 		$nick   = strtolower($player->getName());
 		$api    = $this->api;
 		
-		if( $block->getId() == Block::SIGN_POST or $block->getId() == Block::WALL_SIGN )
+		if( $block->getId() == BlockLegacyIds::SIGN_POST or $block->getId() == BlockLegacyIds::WALL_SIGN )
 		{
 			if( count($api->sign->getAll()) == 0 or $api->getValue('allow_sell', 'config') === FALSE )
 			{
@@ -138,7 +141,7 @@ class PlayerGuard implements Listener
 				$pos = new Vector3($data['pos'][0], $data['pos'][1], $data['pos'][2]);
 				$lvl = $data['level'];
 				
-				if( $block->equals($pos) and $block->getLevel()->getName() == $lvl )
+				if( $block->getPosition()->equals($pos) and $block->getPosition()->getWorld()->getFolderName() == $lvl )
 				{
 					if( isset($api->extension['economyapi']) )
 					{
@@ -157,7 +160,7 @@ class PlayerGuard implements Listener
 						return;
 					}
 					
-					$region = $api->getRegion($block);
+					$region = $api->getRegion($block->getPosition());
 					
 					if( !isset($region) )
 					{
@@ -190,7 +193,7 @@ class PlayerGuard implements Listener
 					$economy->addMoney($region->getOwner(), $price);
 
 					$region->setOwner($nick);
-					$block->getLevel()->setBlock($pos, Block::get(Block::AIR));
+					$block->getPosition()->getWorld()->setBlock($pos, VanillaBlocks::AIR());
 
 					$api->sign->remove($name);
 					$api->sign->save(TRUE);
@@ -205,11 +208,11 @@ class PlayerGuard implements Listener
 		
 		$item = $event->getItem();
 		
-		if( $item->getId() == Item::STICK )
+		if( $item->getId() == ItemIds::STICK )
 		{
-			$event->setCancelled();
+			$event->cancel();
 
-			$region = $api->getRegion($block);
+			$region = $api->getRegion($block->getPosition());
 			
 			if( !isset($region) )
 			{
@@ -225,11 +228,11 @@ class PlayerGuard implements Listener
 			return;
 		}
 
-		if( $item->getId() == Item::WOODEN_AXE )
+		if( $item->getId() == ItemIds::WOODEN_AXE )
 		{
-			$event->setCancelled();
+			$event->cancel();
 
-			$region = $api->getRegion($block);
+			$region = $api->getRegion($block->getPosition());
 
 			if( $region !== NULL and !$player->hasPermission('sexguard.all') )
 			{
@@ -242,7 +245,7 @@ class PlayerGuard implements Listener
 			
 			if( !isset($api->position[0][$nick]) )
 			{
-				$api->position[0][$nick] = $block;
+				$api->position[0][$nick] = $block->getPosition();
 				
 				$api->sendWarning($player, $api->getValue('pos_1_set'));
 				return;
@@ -250,7 +253,7 @@ class PlayerGuard implements Listener
 			
 			if( !isset($api->position[1][$nick]) )
 			{
-				if( $api->position[0][$nick]->getLevel()->getName() != $block->getLevel()->getName() )
+				if( $api->position[0][$nick]->getWorld()->getFolderName() != $block->getPosition()->getWorld()->getFolderName() )
 				{
 					unset($api->position[0][$nick]);
 					$api->sendWarning($player, $api->getValue('pos_another_world'));
@@ -258,7 +261,7 @@ class PlayerGuard implements Listener
 				}
 				
 				$val  = $api->getGroupValue($player);
-				$size = $api->calculateSize($api->position[0][$nick], $block);
+				$size = $api->calculateSize($api->position[0][$nick], $block->getPosition());
 				
 				if( $size > $val['max_size'] and !$player->hasPermission('sexguard.all') )
 				{
@@ -268,7 +271,7 @@ class PlayerGuard implements Listener
 					return;
 				}
 				
-				$api->position[1][$nick] = $block;
+				$api->position[1][$nick] = $block->getPosition();
 				
 				$api->sendWarning($player, $api->getValue('pos_2_set'));
 				return;
@@ -276,7 +279,7 @@ class PlayerGuard implements Listener
 			
 			if( isset($api->position[0][$nick]) and isset($api->position[1][$nick]) )
 			{
-				$api->position[0][$nick] = $block;
+				$api->position[0][$nick] = $block->getPosition();
 				
 				unset($api->position[1][$nick]);
 				$api->sendWarning($player, $api->getValue('pos_1_set'));
@@ -286,30 +289,30 @@ class PlayerGuard implements Listener
 
 		$flag = 'interact';
 
-		if( $block->getId() == Block::CHEST )
+		if( $block->getId() == BlockLegacyIds::CHEST )
 		{
 			$flag = 'chest';
 		}
 
-		if( $block->getId() == Block::ITEM_FRAME_BLOCK )
+		if( $block->getId() == BlockLegacyIds::ITEM_FRAME_BLOCK )
 		{
 			$flag = 'frame';
 		}
 
-		if( $block->getId() == Block::GRASS )
+		if( $block->getId() == BlockLegacyIds::GRASS )
 		{
 			$list = [
-				Item::WOODEN_SHOVEL,
-				Item::STONE_SHOVEL,
-				Item::IRON_SHOVEL,
-				Item::GOLD_SHOVEL,
-				Item::DIAMOND_SHOVEL,
+				ItemIds::WOODEN_SHOVEL,
+				ItemIds::STONE_SHOVEL,
+				ItemIds::IRON_SHOVEL,
+				ItemIds::GOLD_SHOVEL,
+				ItemIds::DIAMOND_SHOVEL,
 
-				Item::WOODEN_HOE,
-				Item::STONE_HOE,
-				Item::IRON_HOE,
-				Item::GOLD_HOE,
-				Item::DIAMOND_HOE
+				ItemIds::WOODEN_HOE,
+				ItemIds::STONE_HOE,
+				ItemIds::IRON_HOE,
+				ItemIds::GOLD_HOE,
+				ItemIds::DIAMOND_HOE
 			];
 
 			if( in_array($item->getId(), $list) )
@@ -323,7 +326,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, $flag, $block) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -347,7 +350,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, 'drop') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -373,7 +376,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, 'sleep') )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -398,7 +401,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, 'bucket', $block) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -423,7 +426,7 @@ class PlayerGuard implements Listener
 		
 		if( $this->isFlagDenied($player, 'bucket', $block) )
 		{
-			$event->setCancelled();
+			$event->cancel();
 		}
 	}
 
@@ -442,7 +445,8 @@ class PlayerGuard implements Listener
 		}
 
 		$api    = $this->api;
-		$region = $api->getRegion($block ?? $player);
+
+		$region = $api->getRegion($player->getPosition() ?? $block->getPosition() );
 		
 		if( !isset($region) )
 		{
@@ -462,7 +466,7 @@ class PlayerGuard implements Listener
 			{
 				$event = new FlagIgnoreEvent($api, $region, $flag, $player);
 
-				$api->getServer()->getPluginManager()->callEvent($event);
+				$event->call();
 
 				if( $event->isCancelled() )
 				{
@@ -481,7 +485,7 @@ class PlayerGuard implements Listener
 			{
 				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $block);
 
-				$api->getServer()->getPluginManager()->callEvent($event);
+				$event->call();
 
 				if( $event->isCancelled() )
 				{

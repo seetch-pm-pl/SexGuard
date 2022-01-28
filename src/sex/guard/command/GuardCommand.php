@@ -29,13 +29,13 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 
 use pocketmine\permission\Permission;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 
 /**
  * @todo rewrite arguments and allow ConsoleCommandSender.
  */
-abstract class GuardCommand extends Command
+class GuardCommand extends Command
 {
 	/**
 	 * @todo this values should be configurable.
@@ -75,10 +75,7 @@ abstract class GuardCommand extends Command
 			new WandArgument($main)
 		];
 
-		$permission = new Permission(self::PERMISSION, self::DESCRIPTION, Permission::DEFAULT_TRUE);
-
-		$main->getServer()->getPluginManager()->addPermission($permission);
-		$this->setPermission($permission->getName());
+		$this->setPermission('sexguard.command.rg');
 	}
 
 
@@ -126,7 +123,7 @@ abstract class GuardCommand extends Command
 	 *
 	 * @return bool
 	 */
-	protected function executeSafe( CommandSender $sender, string $label, array $args ): bool
+	public function execute( CommandSender $sender, string $label, array $args ): bool
 	{
 		$main = $this->getManager();
 
