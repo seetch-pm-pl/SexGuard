@@ -18,8 +18,10 @@ use pocketmine\world\Position;
 use sex\guard\command\GuardCommand;
 use sex\guard\data\Region;
 
-use sex\guard\listener\BlockGuard;
+use sex\guard\listener\block\BlockListener;
+use sex\guard\listener\entity\EntityListener;
 use sex\guard\listener\EntityGuard;
+use sex\guard\listener\player\PlayerListener;
 use sex\guard\listener\PlayerGuard;
 
 use sex\guard\event\region\RegionCreateEvent;
@@ -176,7 +178,7 @@ class Manager extends PluginBase
 		}
 
 		$arr = [];
-		
+
 		foreach( $data as $rg )
 		{
 			if(
@@ -212,7 +214,7 @@ class Manager extends PluginBase
 		{
 			unset($data); return NULL;
 		}
-		
+
 		$x = $pos->getFloorX();
 		$y = $pos->getFloorY();
 		$z = $pos->getFloorZ();
@@ -325,9 +327,9 @@ class Manager extends PluginBase
 		{
 			return;
 		}
-		
+
 		$this->data[$level][] = $region;
-		
+
 		unset($this->position[0][$nick]);
 		unset($this->position[1][$nick]);
 		$this->saveRegion($region);
@@ -416,7 +418,7 @@ class Manager extends PluginBase
 			{
 				unset($data); continue;
 			}
-			
+
 			foreach( $data as $rg )
 			{
 				if( $rg->getOwner() == $nick )
@@ -528,7 +530,7 @@ class Manager extends PluginBase
 		{
 			$y = [ 0, 1 ];
 		}
-		
+
 		return ($x[1] - $x[0]) * ($y[1] - $y[0]) * ($z[1] - $z[0]);
 	}
 
@@ -619,26 +621,26 @@ class Manager extends PluginBase
 	private function initProvider( )
 	{
 		$folder = $this->getDataFolder();
-		
+
 		if( !is_dir($folder) )
 		{
 			@mkdir($folder);
 		}
-		
+
 		$this->saveResource('group.yml');
 		$this->saveResource('config.yml');
 		$this->saveResource('message.yml');
-		
+
 		$this->group   = new Config($folder. 'group.yml');
 		$this->config  = new Config($folder. 'config.yml');
 		$this->message = new Config($folder. 'message.yml');
-		
+
 		$this->sign   = new Config($folder. 'sign.json');
 		$this->region = new Config($folder. 'region.json');
 
 		$this->sign->reload();
 		$this->region->reload();
-		
+
 		foreach( $this->region->getAll() as $name => $data )
 		{
 			/**
@@ -654,16 +656,9 @@ class Manager extends PluginBase
 
 	private function initListener( )
 	{
-		$listener = [
-			new PlayerGuard($this),
-			new BlockGuard($this),
-			new EntityGuard($this)
-		];
-		
-		foreach( $listener as $class )
-		{
-			$this->getServer()->getPluginManager()->registerEvents($class, $this);
-		}
+		(new BlockListener($this))->register();
+		(new EntityListener($this))->register();
+		(new PlayerListener($this))->register();
 	}
 
 
@@ -693,13 +688,13 @@ class Manager extends PluginBase
 			'UniversalMoney',
 			'SexGroup'
 		];
-		
+
 		foreach( $list as $extension )
 		{
 			if( $this->getValue('allow_'. strtolower($extension), 'config') === TRUE )
 			{
 				$plugin = $this->getServer()->getPluginManager()->getPlugin($extension);
-				
+
 				if( isset($plugin) )
 				{
 					$this->extension[strtolower($extension)] = $plugin;
