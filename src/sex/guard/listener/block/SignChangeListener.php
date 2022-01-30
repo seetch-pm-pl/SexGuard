@@ -46,7 +46,7 @@ class SignChangeListener extends BlockListener implements Listener{
 
 		$rname = $region->getRegionName();
 
-		if(strtolower($player->getName()) != $region->getOwner() and !$player->hasPermission('sexguard.all')){
+		if(strtolower($player->getName()) !== $region->getOwner() and !$player->hasPermission('sexguard.all')){
 			$api->sendWarning($player, $api->getValue('player_not_owner'));
 			return;
 		}
@@ -56,7 +56,7 @@ class SignChangeListener extends BlockListener implements Listener{
 		if($sign !== 'жопа'){
 			$pos = $sign['pos'];
 
-			if($pos[0] != $block->getPosition()->getX() or $pos[1] != $block->getPosition()->getY() or $pos[2] != $block->getPosition()->getZ()){
+			if($pos[0] !== $block->getPosition()->getX() or $pos[1] !== $block->getPosition()->getY() or $pos[2] !== $block->getPosition()->getZ()){
 				$api->sendWarning($player, $api->getValue('sell_exist'));
 				return;
 			}

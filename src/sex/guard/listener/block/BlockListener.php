@@ -96,7 +96,7 @@ class BlockListener{
 
 		$nick = strtolower($player->getName());
 
-		if($nick != $region->getOwner()){
+		if($nick !== $region->getOwner()){
 			if(!in_array($nick, $region->getMemberList())){
 				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $block);
 

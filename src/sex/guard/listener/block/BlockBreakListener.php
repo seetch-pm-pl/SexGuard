@@ -29,7 +29,7 @@ class BlockBreakListener extends BlockListener implements Listener{
 			return;
 		}
 
-		if($block->getId() != BlockLegacyIds::SIGN_POST and $block->getId() != BlockLegacyIds::WALL_SIGN){
+		if($block->getId() !== BlockLegacyIds::SIGN_POST and $block->getId() !== BlockLegacyIds::WALL_SIGN){
 			return;
 		}
 

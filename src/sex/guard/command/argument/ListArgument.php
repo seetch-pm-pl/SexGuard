@@ -18,7 +18,7 @@ use pocketmine\player\Player;
 
 class ListArgument extends Argument
 {
-	const NAME = 'list';
+	public const NAME = 'list';
 
 
 	/**

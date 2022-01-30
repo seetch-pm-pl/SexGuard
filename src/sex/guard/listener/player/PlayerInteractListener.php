@@ -83,7 +83,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 					$block->getPosition()->getWorld()->setBlock($pos, VanillaBlocks::AIR());
 
 					$api->sign->remove($name);
-					$api->sign->save(true);
+					$api->sign->save();
 
 					$api->sendWarning($player, str_replace('{region}', $region->getRegionName(), $api->getValue('player_buy_rg')));
 					break;
@@ -119,7 +119,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			$region = $api->getRegion($block->getPosition());
 
 			if($region !== null and !$player->hasPermission('sexguard.all')){
-				if($region->getOwner() != $nick){
+				if($region->getOwner() !== $nick){
 					$api->sendWarning($player, $api->getValue('rg_override'));
 					return;
 				}
@@ -133,7 +133,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			}
 
 			if(!isset($api->position[1][$nick])){
-				if($api->position[0][$nick]->getWorld()->getFolderName() != $block->getPosition()->getWorld()->getFolderName()){
+				if($api->position[0][$nick]->getWorld()->getFolderName() !== $block->getPosition()->getWorld()->getFolderName()){
 					unset($api->position[0][$nick]);
 					$api->sendWarning($player, $api->getValue('pos_another_world'));
 					return;

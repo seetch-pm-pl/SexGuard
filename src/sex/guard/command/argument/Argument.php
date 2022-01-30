@@ -1,73 +1,26 @@
-<?php namespace sex\guard\command\argument;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | | /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | | \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   http://universalcrew.ru
- *
- */
-use sex\guard\Manager;
-
+namespace sex\guard\command\argument;
 
 use pocketmine\player\Player;
+use sex\guard\Manager;
 
+abstract class Argument{
 
-abstract class Argument
-{
-	const NAME = '';
+	public const NAME = '';
 
-
-	/**
-	 * @var Manager
-	 */
-	private $main;
-
-
-	/**
-	 * @param Manager $main
-	 */
-	function __construct( Manager $main )
-	{
-		$this->main = $main;
+	public function __construct(private Manager $plugin){
 	}
 
-
-	/**
-	 * @return string
-	 */
-	function getName( )
-	{
+	public function getName() : string{
 		return static::NAME;
 	}
 
-
-	/**
-	 * @return Manager
-	 */
-	function getManager( )
-	{
-		return $this->main;
+	public function getPlugin() : Manager{
+		return $this->plugin;
 	}
 
-
-	/**
-	 *                                          _
-	 *   __ _ _ ____ _ _   _ _ __ _   ___ _ ___| |_
-	 *  / _' | '_/ _' | | | | '  ' \ / _ \ '_ \   _\
-	 * | (_) | || (_) | |_| | || || |  __/ | | | |_
-	 *  \__,_|_| \__, |\___/|_||_||_|\___|_| |_|\__\
-	 *           /___/
-	 *
-	 * @param  Player   $sender
-	 * @param  string[] $args
-	 *
-	 * @return bool
-	 */
-	abstract function execute( Player $sender, array $args ): bool;
+	abstract public function execute(Player $sender, array $args) : bool;
 }
