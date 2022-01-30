@@ -1,92 +1,32 @@
-<?php namespace sex\guard\event\region;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | / /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | \ \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   https://vk.com/infernopage
- *
- */
-
-use pocketmine\event\CancellableTrait;
-use sex\guard\Manager;
-use sex\guard\data\Region;
-use sex\guard\event\RegionEvent;
+namespace sex\guard\event\region;
 
 use pocketmine\event\Cancellable;
+use pocketmine\event\CancellableTrait;
+use sex\guard\data\Region;
+use sex\guard\event\RegionEvent;
+use sex\guard\Manager;
 
+class RegionFlagChangeEvent extends RegionEvent implements Cancellable{
 
-class RegionFlagChangeEvent extends RegionEvent implements Cancellable
-{
 	use CancellableTrait;
 
-
-	/**
-	 * @var string
-	 */
-	private $owner;
-
-	/**
-	 * @var string
-	 */
-	private $flag;
-
-	/**
-	 * @var bool
-	 */
-	private $new_value;
-
-
-	/**
-	 *                        _
-	 *   _____    _____ _ __ | |__
-	 *  / _ \ \  / / _ \ '_ \|  _/
-	 * |  __/\ \/ /  __/ | | | |_
-	 *  \___/ \__/ \___|_| |_|\__\
-	 *
-	 *
-	 * @param Manager $main
-	 * @param Region  $region
-	 * @param string  $flag
-	 * @param bool    $value
-	 */
-	function __construct( Manager $main, Region $region, string $flag, bool $value )
-	{
+	public function __construct(Manager $main, Region $region, private string $flag, private bool $newValue){
 		parent::__construct($main, $region);
-
-		$this->flag      = strtolower($flag);
-		$this->new_value = $value;
 	}
 
-
-	/**
-	 * @return string
-	 */
-	function getFlag( )
-	{
-		return $this->flag;
+	public function getFlag() : string{
+		return strtolower($this->flag);
 	}
 
-
-	/**
-	 * @return bool
-	 */
-	function getOldValue( )
-	{
+	public function getOldValue() : bool{
 		return !$this->getNewValue();
 	}
 
-
-	/**
-	 * @return bool
-	 */
-	function getNewValue( )
-	{
-		return $this->new_value;
+	public function getNewValue() : bool{
+		return $this->newValue;
 	}
 }
