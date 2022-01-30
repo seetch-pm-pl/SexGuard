@@ -330,7 +330,7 @@ class Manager extends PluginBase{
 		return $arr;
 	}
 
-	public function getValue(string $key, string $type = 'message') : string|int|array|null{
+	public function getValue(string $key, string $type = 'message') : string|int|array|bool|null{
 		$type = strtolower($type);
 		$key = mb_strtolower($key);
 		$error = "Configuration error: пункт '$key' не найден в $type.yml. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/$type.yml) и перезагрузите сервер.";
