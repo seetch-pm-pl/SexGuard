@@ -25,7 +25,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		$nick = strtolower($player->getName());
-		$api = $this->api;
+		$api = $this->getPlugin();
 
 		if($block->getId() == BlockLegacyIds::SIGN_POST or $block->getId() == BlockLegacyIds::WALL_SIGN){
 			if(count($api->sign->getAll()) == 0 or $api->getValue('allow_sell', 'config') === false){
@@ -65,11 +65,11 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 					$val = $api->getGroupValue($player);
 
 					if(count($api->getRegionList($nick)) > $val['max_count']){
-						$api->sendWarning($player, str_replace('{max_count}', $val['max_count'], $api->getValue('rg_overcount')));
+						$api->sendWarning($player, str_replace('{max_count}', (array) $val['max_count'], $api->getValue('rg_overcount')));
 						return;
 					}
 
-					$price = intval($data['price']);
+					$price = $data['price'];
 
 					if($money < $price){
 						$api->sendWarning($player, str_replace('{price}', $price, $api->getValue('player_have_not_money')));
