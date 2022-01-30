@@ -270,7 +270,7 @@ class BlockGuard implements Listener
 		if( $pk instanceof ItemFrameDropItemPacket)
 		{
 			$player = $event->getOrigin()->getPlayer();
-			$tile   = $player->getPosition()->getWorld()->getTile($pk->blockPosition);
+			$tile   = $player->getPosition()->getWorld()->getTile(new Vector3($pk->blockPosition->getX(), $pk->blockPosition->getY(), $pk->blockPosition->getZ()));
 
 			if( !($tile instanceof ItemFrame) )
 			{
