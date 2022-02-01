@@ -25,11 +25,6 @@ class MemberArgument extends Argument{
 			return false;
 		}
 
-		if(!isset($region)){
-			$sender->sendMessage($main->getValue('rg_not_exist'));
-			return false;
-		}
-
 		if($region->getOwner() !== $nick and !$sender->hasPermission('sexguard.all')){
 			$sender->sendMessage($main->getValue('player_not_owner'));
 			return false;

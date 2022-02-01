@@ -386,7 +386,7 @@ class Manager extends PluginBase{
 	}
 
 	/**
-	 * @return int[]
+	 * @return string[]
 	 */
 	public function getAllowedFlag() : array{
 		$list = array_map('strtolower', (array) $this->getValue('allowed_flag', 'config'));

@@ -41,7 +41,7 @@ class PlayerListener{
 
 		$api = $this->getPlugin();
 
-		$region = $api->getRegion($player->getPosition() ?? $block->getPosition());
+		$region = $api->getRegion($block->getPosition() ?? $player->getPosition());
 
 		if(!isset($region)){
 			return false;

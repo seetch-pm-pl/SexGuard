@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace sex\guard\listener\player;
 
 use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\tile\ItemFrame;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -14,6 +15,20 @@ use pocketmine\math\Vector3;
 class PlayerInteractListener extends PlayerListener implements Listener{
 
 	public function onEvent(PlayerInteractEvent $event) : void{
+		$player = $event->getPlayer();
+		$world = $player->getWorld();
+
+		$clickedBlock = $event->getBlock();
+		$clickedBlockPos = $clickedBlock->getPosition();
+
+		$frameTile = $world->getTile($clickedBlockPos);
+
+		if($frameTile instanceof ItemFrame){
+			if($this->isFlagDenied($player, 'frame', $clickedBlock)){
+				$event->cancel();
+			}
+		}
+
 		if($event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK){
 			return; // thx Yexeed.
 		}
@@ -22,7 +37,6 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			return;
 		}
 
-		$player = $event->getPlayer();
 		$block = $event->getBlock();
 		$nick = strtolower($player->getName());
 		$api = $this->getPlugin();
@@ -143,7 +157,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 				$size = $api->calculateSize($api->position[0][$nick], $block->getPosition());
 
 				if($size > $val['max_size'] and !$player->hasPermission('sexguard.all')){
-					$msg = str_replace('{max_size}', $val['max_size'], $api->getValue('rg_oversize'));
+					$msg = str_replace('{max_size}', (array) $val['max_size'], $api->getValue('rg_oversize'));
 
 					$api->sendWarning($player, $msg);
 					return;

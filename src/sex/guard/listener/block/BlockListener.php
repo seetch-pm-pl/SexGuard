@@ -25,8 +25,7 @@ class BlockListener{
 			SignChangeListener::class,
 			BlockBreakListener::class,
 			BlockPlaceListener::class,
-			LeavesDecayListener::class,
-			DataPacketReceiveListener::class
+			LeavesDecayListener::class
 		];
 		foreach($listeners as $listener){
 			$this->getPlugin()->getServer()->getPluginManager()->registerEvents(new $listener($this->getPlugin()), $this->getPlugin());
