@@ -1,82 +1,36 @@
-<?php namespace sex\guard\event\region;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | / /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | \ \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   https://vk.com/infernopage
- *
- */
-
-use pocketmine\event\CancellableTrait;
-use sex\guard\Manager;
-use sex\guard\data\Region;
-use sex\guard\event\RegionEvent;
+namespace sex\guard\event\region;
 
 use pocketmine\event\Cancellable;
+use pocketmine\event\CancellableTrait;
+use sex\guard\data\Region;
+use sex\guard\event\RegionEvent;
+use sex\guard\Manager;
 
-
-class RegionMemberChangeEvent extends RegionEvent implements Cancellable
-{
-	const TYPE_ADD    = 0;
-	const TYPE_REMOVE = 1;
-
+class RegionMemberChangeEvent extends RegionEvent implements Cancellable{
 
 	use CancellableTrait;
 
+	public const TYPE_ADD = 0;
+	public const TYPE_REMOVE = 1;
 
-	/**
-	 * @var string
-	 */
-	private $member;
+	private int $type;
 
-	/**
-	 * @var int
-	 */
-	private $type;
-
-
-	/**
-	 *                        _
-	 *   _____    _____ _ __ | |__
-	 *  / _ \ \  / / _ \ '_ \|  _/
-	 * |  __/\ \/ /  __/ | | | |_
-	 *  \___/ \__/ \___|_| |_|\__\
-	 *
-	 *
-	 * @param Manager $main
-	 * @param Region  $region
-	 * @param string  $member
-	 * @param int     $type
-	 */
-	function __construct( Manager $main, Region $region, string $member, int $type )
-	{
+	public function __construct(Manager $main, Region $region, private string $member, int $type){
 		parent::__construct($main, $region);
 
 		$this->member = strtolower($member);
-		$this->type   = $type == self::TYPE_ADD ? self::TYPE_ADD : self::TYPE_REMOVE;
+		$this->type = $type == self::TYPE_ADD ? self::TYPE_ADD : self::TYPE_REMOVE;
 	}
 
-
-	/**
-	 * @return string
-	 */
-	function getMember( )
-	{
-		return $this->member;
+	public function getMember() : string{
+		return strtolower($this->member);
 	}
 
-
-	/**
-	 * @return int
-	 */
-	function getType( )
-	{
+	public function getType() : int{
 		return $this->type;
 	}
 }

@@ -1,109 +1,75 @@
-<?php namespace sex\guard\command\argument;
+<?php
 
+declare(strict_types=1);
+
+namespace sex\guard\command\argument;
 
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | | /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | | \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   http://universalcrew.ru
- *
- */
+class CreateArgument extends Argument{
 
-class CreateArgument extends Argument
-{
-	const NAME = 'create';
+	public const NAME = 'create';
 
-
-	/**
-	 *                                          _
-	 *   __ _ _ ____ _ _   _ _ __ _   ___ _ ___| |_
-	 *  / _' | '_/ _' | | | | '  ' \ / _ \ '_ \   _\
-	 * | (_) | || (_) | |_| | || || |  __/ | | | |_
-	 *  \__,_|_| \__, |\___/|_||_||_|\___|_| |_|\__\
-	 *           /___/
-	 *
-	 * @param  Player   $sender
-	 * @param  string[] $args
-	 *
-	 * @return bool
-	 */
-	function execute( Player $sender, array $args ): bool
-	{
+	public function execute(Player $sender, array $args) : bool{
 		$nick = strtolower($sender->getName());
-		$main = $this->getManager();
+		$main = $this->getPlugin();
 
-		if( count($args) < 1 )
-		{
+		if(count($args) < 1){
 			$sender->sendMessage($main->getValue('create_help'));
-			return FALSE;
+			return false;
 		}
 
-		if( !isset($main->position[0][$nick]) or !isset($main->position[1][$nick]) )
-		{
+		if(!isset($main->position[0][$nick]) or !isset($main->position[1][$nick])){
 			$sender->sendMessage($main->getValue('pos_help'));
-			return FALSE;
+			return false;
 		}
 
 		$name = $args[0];
 
-		if( strlen($name) < 4 )
-		{
+		if(strlen($name) < 4){
 			$sender->sendMessage($main->getValue('short_name'));
-			return FALSE;
+			return false;
 		}
 
-		if( strlen($name) > 12 )
-		{
+		if(strlen($name) > 12){
 			$sender->sendMessage($main->getValue('long_name'));
-			return FALSE;
+			return false;
 		}
 
-		if( preg_match('#[^\s\da-z]#is', $name) )
-		{
+		if(preg_match('#[^\s\da-z]#is', $name)){
 			$sender->sendMessage($main->getValue('bad_name'));
-			return FALSE;
+			return false;
 		}
 
-		if( $main->getRegionByName($name) !== NULL )
-		{
+		if($main->getRegionByName($name) !== null){
 			$sender->sendMessage($main->getValue('rg_exist'));
-			return FALSE;
+			return false;
 		}
 
 		$val = $main->getGroupValue($sender);
 
-		if( count($main->getRegionList($nick)) >= $val['max_count'] )
-		{
-			if( !$sender->hasPermission('sexguard.all') )
-			{
-				$sender->sendMessage(str_replace('{max_count}', $val['max_count'], $main->getValue('rg_overcount')));
-				return FALSE;
+		if(count($main->getRegionList($nick)) >= $val['max_count']){
+			if(!$sender->hasPermission('sexguard.all')){
+				$sender->sendMessage(str_replace('{max_count}', (array) $val['max_count'], $main->getValue('rg_overcount')));
+				return false;
 			}
 		}
 
 		$pos1 = $main->position[0][$nick];
 		$pos2 = $main->position[1][$nick];
 
-		if( $main->calculateSize($pos1, $pos2) > $val['max_size'] and !$sender->hasPermission('sexguard.all') )
-		{
-			$sender->sendMessage(str_replace('{max_size}', $val['max_size'], $main->getValue('rg_oversize')));
-			return FALSE;
+		if($main->calculateSize($pos1, $pos2) > $val['max_size'] and !$sender->hasPermission('sexguard.all')){
+			$sender->sendMessage(str_replace('{max_size}', (array) $val['max_size'], $main->getValue('rg_oversize')));
+			return false;
 		}
 
-		$x = [ min($pos1->getX(), $pos2->getX()), max($pos1->getX(), $pos2->getX()) ];
-		$y = [ min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY()) ];
-		$z = [ min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ()) ];
+		$x = [min($pos1->getX(), $pos2->getX()), max($pos1->getX(), $pos2->getX())];
+		$y = [min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY())];
+		$z = [min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ())];
 
-		if( $main->getValue('full_height', 'config') === TRUE )
-		{
-			$y = [ 0, 256 ];
+		if($main->getValue('full_height', 'config') === true){
+			$y = [0, 256];
 		}
 
 		$min = new Position($x[0], $y[0], $z[0], $pos1->getWorld());
@@ -111,47 +77,35 @@ class CreateArgument extends Argument
 
 		$override = $main->getOverride($min, $max);
 
-		if( count($override) > 0 and !$sender->hasPermission('sexguard.all') )
-		{
-			foreach( $override as $rg )
-			{
-				if( $rg->getOwner() != $nick )
-				{
+		if(count($override) > 0 and !$sender->hasPermission('sexguard.all')){
+			foreach($override as $rg){
+				if($rg->getOwner() !== $nick){
 					$sender->sendMessage($main->getValue('rg_override'));
-					return FALSE;
+					return false;
 				}
 			}
 		}
 
-		if( $main->getValue('pay_for_region', 'config') === TRUE )
-		{
-			if( isset($main->extension['economyapi']) )
-			{
+		if($main->getValue('pay_for_region', 'config') === true){
+			if(isset($main->extension['economyapi'])){
 				$economy = $main->extension['economyapi'];
-				$money   = $economy->myMoney($nick);
+				$money = $economy->myMoney($nick);
 			}
 
-			if( isset($main->extension['universalmoney']) )
-			{
+			if(isset($main->extension['universalmoney'])){
 				$economy = $main->extension['universalmoney'];
-				$money   = $economy->getMoney($nick);
+				$money = $economy->getMoney($nick);
 			}
 
-			if( isset($economy) )
-			{
-				if( !$sender->hasPermission('sexguard.all') )
-				{
-					$price = intval($main->getValue('price', 'config'));
+			if(isset($economy)){
+				if(!$sender->hasPermission('sexguard.all')){
+					$price = $main->getValue('price', 'config');
 
-					if( $money >= $price )
-					{
+					if($money >= $price){
 						$economy->reduceMoney($nick, $price);
-					}
-
-					else
-					{
+					}else{
 						$sender->sendMessage(str_replace('{price}', $price, $main->getValue('player_have_not_money')));
-						return FALSE;
+						return false;
 					}
 				}
 			}
@@ -159,6 +113,6 @@ class CreateArgument extends Argument
 
 		$main->createRegion($nick, $name, $min, $max);
 		$sender->sendMessage(str_replace('{region}', $name, $main->getValue('rg_create')));
-		return TRUE;
+		return true;
 	}
 }

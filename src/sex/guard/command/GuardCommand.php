@@ -1,156 +1,86 @@
-<?php namespace sex\guard\command;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | | /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | | \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   http://universalcrew.ru
- *
- */
-use sex\guard\Manager;
+namespace sex\guard\command;
 
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
 use sex\guard\command\argument\Argument;
+use sex\guard\command\argument\CreateArgument;
 use sex\guard\command\argument\FlagArgument;
 use sex\guard\command\argument\ListArgument;
-use sex\guard\command\argument\WandArgument;
-use sex\guard\command\argument\OwnerArgument;
-use sex\guard\command\argument\CreateArgument;
 use sex\guard\command\argument\MemberArgument;
-use sex\guard\command\argument\RemoveArgument;
+use sex\guard\command\argument\OwnerArgument;
 use sex\guard\command\argument\PositionArgument;
+use sex\guard\command\argument\RemoveArgument;
+use sex\guard\command\argument\WandArgument;
+use sex\guard\Manager;
 
+class GuardCommand extends Command{
 
-use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
+	public const NAME = 'rg';
+	public const DESCRIPTION = 'Показывает помощь или список команд управления регионами';
+	public const PERMISSION = 'sexguard.command.rg';
 
-use pocketmine\permission\Permission;
-use pocketmine\player\Player;
+	/** @var Argument[] */
+	private array $argumentList;
 
-
-/**
- * @todo rewrite arguments and allow ConsoleCommandSender.
- */
-class GuardCommand extends Command
-{
-	/**
-	 * @todo this values should be configurable.
-	 */
-	const NAME        = 'rg';
-	const DESCRIPTION = 'Показывает помощь или список команд управления регионами';
-	const PERMISSION  = 'sexguard.command.rg';
-
-
-	/**
-	 * @var Manager
-	 */
-	private $main;
-
-	/**
-	 * @var Argument[]
-	 */
-	private $argument_list = [];
-
-
-	/**
-	 * @param Manager $main
-	 */
-	function __construct( Manager $main )
-	{
+	public function __construct(private Manager $plugin){
 		parent::__construct(self::NAME, self::DESCRIPTION);
 
-		$this->main          = $main;
-		$this->argument_list = [
-			new PositionArgument($main),
-			new CreateArgument($main),
-			new MemberArgument($main),
-			new RemoveArgument($main),
-			new OwnerArgument($main),
-			new FlagArgument($main),
-			new ListArgument($main),
-			new WandArgument($main)
+		$this->argumentList = [
+			new PositionArgument($plugin),
+			new CreateArgument($plugin),
+			new MemberArgument($plugin),
+			new RemoveArgument($plugin),
+			new OwnerArgument($plugin),
+			new FlagArgument($plugin),
+			new ListArgument($plugin),
+			new WandArgument($plugin)
 		];
 
-		$this->setPermission('sexguard.command.rg');
+		$this->setPermission(self::PERMISSION);
 	}
 
-
-	/**
-	 * @var Manager
-	 */
-	private function getManager( )
-	{
-		return $this->main;
-	}
-
-
-	/**
-	 * @var Argument|null
-	 */
-	private function getArgument( string $name )
-	{
+	private function getArgument(string $name) : ?Argument{
 		$name = strtolower($name);
 
-		foreach( $this->argument_list as $argument )
-		{
-			if( $argument->getName() != $name )
-			{
+		foreach($this->argumentList as $argument){
+			if($argument->getName() !== $name){
 				continue;
 			}
 
 			return $argument;
 		}
 
-		return NULL;
+		return null;
 	}
 
+	public function execute(CommandSender $sender, string $label, array $args) : bool{
+		$main = $this->plugin;
 
-	/**
-	 *                                             _
-	 *   ___  ___  _ __ _  _ __ _   __ _ _ __   __| |
-	 *  / __\/ _ \| '  ' \| '  ' \ / _' | '_ \ / _' |
-	 * | (__| (_) | || || | || || | (_) | | | | (_) |
-	 *  \___/\___/|_||_||_|_||_||_|\__._|_| |_|\__._|
-	 *
-	 *
-	 * @param  CommandSender $sender
-	 * @param  string        $label
-	 * @param  string[]      $args
-	 *
-	 * @return bool
-	 */
-	public function execute( CommandSender $sender, string $label, array $args ): bool
-	{
-		$main = $this->getManager();
-
-		if( !($sender instanceof Player) )
-		{
+		if(!($sender instanceof Player)){
 			$sender->sendMessage($main->getValue('no_console'));
-			return FALSE;
+			return false;
 		}
 
-		if( !$this->testPermissionSilent($sender) )
-		{
+		if(!$this->testPermissionSilent($sender)){
 			$sender->sendMessage($main->getValue('no_permission'));
-			return FALSE;
+			return false;
 		}
 
-		if( count($args) < 1 )
-		{
+		if(count($args) < 1){
 			$sender->sendMessage($main->getValue('rg_help'));
-			return FALSE;
+			return false;
 		}
 
 		$argument = $this->getArgument(array_shift($args));
 
-		if( !isset($argument) )
-		{
+		if(!isset($argument)){
 			$sender->sendMessage($main->getValue('rg_help'));
-			return FALSE;
+			return false;
 		}
 
 		return $argument->execute($sender, array_map('strtolower', $args));

@@ -1,85 +1,52 @@
-<?php namespace sex\guard\command\argument;
+<?php
 
+declare(strict_types=1);
+
+namespace sex\guard\command\argument;
 
 use pocketmine\player\Player;
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | | /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | | \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   http://universalcrew.ru
- *
- */
+class FlagArgument extends Argument{
 
+	public const NAME = 'flag';
 
-class FlagArgument extends Argument
-{
-	const NAME = 'flag';
-
-
-	/**
-	 *                                          _
-	 *   __ _ _ ____ _ _   _ _ __ _   ___ _ ___| |_
-	 *  / _' | '_/ _' | | | | '  ' \ / _ \ '_ \   _\
-	 * | (_) | || (_) | |_| | || || |  __/ | | | |_
-	 *  \__,_|_| \__, |\___/|_||_||_|\___|_| |_|\__\
-	 *           /___/
-	 *
-	 * @param  Player   $sender
-	 * @param  string[] $args
-	 *
-	 * @return bool
-	 */
-	function execute( Player $sender, array $args ): bool
-	{
+	public function execute(Player $sender, array $args) : bool{
 		$nick = strtolower($sender->getName());
-		$main = $this->getManager();
+		$main = $this->getPlugin();
 		$list = $main->getAllowedFlag();
 
-		if( count($args) < 2 )
-		{
+		if(count($args) < 2){
 			$sender->sendMessage(str_replace('{flag_list}', implode(' ', $list), $main->getValue('flag_help')));
-			return FALSE;
+			return false;
 		}
 
 		$region = $main->getRegionByName($args[0]);
 
-		if( !isset($region) )
-		{
+		if(!isset($region)){
 			$sender->sendMessage($main->getValue('rg_not_exist'));
-			return FALSE;
+			return false;
 		}
 
-		if( $region->getOwner() != $nick and !$sender->hasPermission('sexguard.all') )
-		{
+		if($region->getOwner() !== $nick and !$sender->hasPermission('sexguard.all')){
 			$sender->sendMessage($main->getValue('player_not_owner'));
-			return FALSE;
+			return false;
 		}
 
 		$flag = $args[1];
 
-		if( !in_array($flag, $list) )
-		{
+		if(!in_array($flag, $list)){
 			$sender->sendMessage($main->getValue('flag_not_exist'));
-			return FALSE;
+			return false;
 		}
 
-		if( $region->getFlagValue($flag) )
-		{
-			$region->setFlag($flag, FALSE);
+		if($region->getFlagValue($flag)){
+			$region->setFlag($flag, false);
 			$sender->sendMessage(str_replace('{flag}', $flag, $main->getValue('flag_off')));
-		}
-
-		else
-		{
-			$region->setFlag($flag, TRUE);
+		}else{
+			$region->setFlag($flag, true);
 			$sender->sendMessage(str_replace('{flag}', $flag, $main->getValue('flag_on')));
 		}
 
-		return TRUE;
+		return true;
 	}
 }

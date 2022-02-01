@@ -1,80 +1,30 @@
-<?php namespace sex\guard\event\flag;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | / /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | \ \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   https://vk.com/infernopage
- *
- */
-use sex\guard\Manager;
+namespace sex\guard\event\flag;
+
 use sex\guard\data\Region;
 use sex\guard\event\RegionEvent;
+use sex\guard\Manager;
 
-use pocketmine\event\plugin\PluginEvent;
+class FlagCheckEvent extends RegionEvent{
 
+	private bool $needCancel = false;
 
-class FlagCheckEvent extends RegionEvent
-{
-	/**
-	 * @var string
-	 */
-	private $flag;
-
-	/**
-	 * @var bool
-	 */
-	private $need_cancel = FALSE;
-
-
-	/**
-	 * @param Manager $main
-	 * @param Region  $region
-	 * @param string  $flag
-	 */
-	function __construct( Manager $main, Region $region, string $flag )
-	{
+	public function __construct(Manager $main, Region $region, private string $flag){
 		parent::__construct($main, $region);
-
-		$this->flag = strtolower($flag);
 	}
 
-
-	/**
-	 *                        _
-	 *   _____    _____ _ __ | |__
-	 *  / _ \ \  / / _ \ '_ \|  _/
-	 * |  __/\ \/ /  __/ | | | |_
-	 *  \___/ \__/ \___|_| |_|\__\
-	 *
-	 *
-	 * @return string
-	 */
-	function getFlag( )
-	{
-		return $this->flag;
+	public function getFlag() : string{
+		return strtolower($this->flag);
 	}
 
-
-	/**
-	 * @return bool
-	 */
-	function isMainEventCancelled( )
-	{
-		return $this->need_cancel;
+	public function isMainEventCancelled() : bool{
+		return $this->needCancel;
 	}
 
-
-	/**
-	 * @param bool $value
-	 */
-	function setMainEventCancelled( bool $value = TRUE )
-	{
-		$this->need_cancel = $value;
+	public function setMainEventCancelled(bool $value = true){
+		$this->needCancel = $value;
 	}
 }

@@ -1,126 +1,73 @@
-<?php namespace sex\guard;
+<?php
 
+declare(strict_types=1);
 
-/**
- *  _    _       _                          _  ____
- * | |  | |_ __ (_)_    _____ _ ______ __ _| |/ ___\_ _______      __
- * | |  | | '_ \| | \  / / _ \ '_/ __// _' | | /   | '_/ _ \ \    / /
- * | |__| | | | | |\ \/ /  __/ | \__ \ (_) | | \___| ||  __/\ \/\/ /
- *  \____/|_| |_|_| \__/ \___|_| /___/\__,_|_|\____/_| \___/ \_/\_/
- *
- * @author sex_KAMAZ
- * @link   http://universalcrew.ru
- *
- */
+namespace sex\guard;
 
-use pocketmine\permission\PermissionManager;
+use Exception;
+use pocketmine\player\Player;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use sex\guard\command\GuardCommand;
 use sex\guard\data\Region;
-
-use sex\guard\listener\BlockGuard;
-use sex\guard\listener\EntityGuard;
-use sex\guard\listener\PlayerGuard;
-
 use sex\guard\event\region\RegionCreateEvent;
 use sex\guard\event\region\RegionRemoveEvent;
+use sex\guard\listener\block\BlockListener;
+use sex\guard\listener\entity\EntityListener;
+use sex\guard\listener\player\PlayerListener;
 
-use pocketmine\permission\Permission;
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
-use pocketmine\player\Player;
+class Manager extends PluginBase{
 
-/**
- * @todo throw exceptions in production isn't a good practice.
- *       add config autoupdater.
- */
-use Exception;
-
-
-/**
- * @todo implement 'manager -> provider' pattern.
- *       convert arrays to containers.
- */
-class Manager extends PluginBase
-{
 	const CONFIGURATION_SIGN = '5bfa52e5eed0d57dee1f33cd435eb988';
 
 	const DEFAULT_FLAG = [
-		'interact' => TRUE,
-		'teleport' => TRUE,
-		'combust'  => FALSE,
-		'explode'  => FALSE,
-		'change'   => FALSE,
-		'bucket'   => FALSE,
-		'damage'   => TRUE,
-		'chest'    => FALSE,
-		'frame'    => FALSE,
-		'place'    => FALSE,
-		'break'    => FALSE,
-		'sleep'    => FALSE,
-		'decay'    => TRUE,
-		'drop'     => TRUE,
-		'chat'     => TRUE,
-		'pvp'      => FALSE,
-		'mob'      => TRUE
+		'interact' => true,
+		'teleport' => true,
+		'combust' => false,
+		'explode' => false,
+		'change' => false,
+		'bucket' => false,
+		'damage' => true,
+		'chest' => false,
+		'frame' => false,
+		'place' => false,
+		'break' => false,
+		'sleep' => false,
+		'decay' => true,
+		'drop' => true,
+		'chat' => true,
+		'pvp' => false,
+		'mob' => true
 	];
 
+	private static ?Manager $instance = null;
 
-	/**
-	 * @var Manager
-	 */
-	private static $instance = null;
-
-
-	/**
-	 * @return Manager
-	 */
-	static function getInstance( ): Manager
-	{
+	public static function getInstance() : Manager{
 		return self::$instance;
 	}
 
+	private Config $message, $region, $config, $group;
 
-	/**
-	 * @var Config
-	 */
-	private $message, $region, $config, $group;
+	/** @var Region[][] */
+	private array $data = [];
 
-	/**
-	 * @todo better store $data in provider.
-	 *
-	 * @var Region[][]
-	 */
-	private $data = [];
+	/** @var Position[] */
+	public array $position = [];
 
-	/**
-	 * @var Position[]
-	 */
-	public $position = [];
+	/** @var PluginBase[] */
+	public array $extension = [];
 
-	/**
-	 * @var PluginBase[]
-	 */
-	public $extension = [];
+	public Config $sign;
 
-	/**
-	 * @var Config
-	 */
-	public $sign;
-
-
-	protected function onLoad( ) : void
-	{
+	protected function onLoad() : void{
 		$this->loadInstance();
 	}
 
-
-	protected function onEnable( ) : void
-	{
+	protected function onEnable() : void{
 		$this->initProvider();
 
-		if( $this->getValue('sign', 'config') !== self::CONFIGURATION_SIGN )
-		{
+		if($this->getValue('sign', 'config') !== self::CONFIGURATION_SIGN){
 			throw new Exception("Configuration error: использование старой версии конфига. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/config.yml) и перезагрузите сервер.");
 		}
 
@@ -129,100 +76,74 @@ class Manager extends PluginBase
 		$this->initExtension();
 	}
 
-
-	/**
-	 * @todo data stores can be deleted by user.
-	 */
-	protected function onDisable( )  : void
-	{
+	protected function onDisable() : void{
 		$this->region->save();
 		$this->sign->save();
 	}
 
-
 	/**
-	 *              _
-	 *   __ _ ____ (_)
-	 *  / _' |  _ \| |
-	 * | (_) | (_) | |
-	 *  \__,_|  __/|_|
-	 *       |_|
-	 *
-	 *
-	 * @param  Position $min
-	 * @param  Position $max
+	 * @param Position $min
+	 * @param Position $max
 	 *
 	 * @return Region[]
 	 */
-	function getOverride( Position $min, Position $max ): array
-	{
+	public function getOverride(Position $min, Position $max) : array{
 		$level = $min->getWorld()->getFolderName();
 
-		if( $level != $max->getWorld()->getFolderName() )
-		{
+		if($level !== $max->getWorld()->getFolderName()){
 			return [];
 		}
 
-		if( !isset($this->data[$level]) )
-		{
+		if(!isset($this->data[$level])){
 			return [];
 		}
 
 		$data = $this->data[$level];
 
-		if( count($data) == 0 )
-		{
-			unset($data); return [];
+		if(count($data) == 0){
+			unset($data);
+			return [];
 		}
 
 		$arr = [];
-		
-		foreach( $data as $rg )
-		{
+
+		foreach($data as $rg){
 			if(
 				$rg->getMin('x') <= $max->getX() and $min->getX() <= $rg->getMax('x') and
 				$rg->getMin('y') <= $max->getY() and $min->getY() <= $rg->getMax('y') and
 				$rg->getMin('z') <= $max->getZ() and $min->getZ() <= $rg->getMax('z')
-			) {
+			){
 				$arr[] = $rg;
 			}
 		}
 
-		unset($data); return $arr;
+		unset($data);
+		return $arr;
 	}
 
-
-	/**
-	 * @param  Position $pos
-	 *
-	 * @return Region | NULL
-	 */
-	function getRegion( Position $pos )
-	{
+	public function getRegion(Position $pos) : ?Region{
 		$level = $pos->getWorld()->getFolderName();
 
-		if( !isset($this->data[$level]) )
-		{
-			return NULL;
+		if(!isset($this->data[$level])){
+			return null;
 		}
 
 		$data = $this->data[$level];
 
-		if( count($data) == 0 )
-		{
-			unset($data); return NULL;
+		if(count($data) == 0){
+			unset($data);
+			return null;
 		}
-		
+
 		$x = $pos->getFloorX();
 		$y = $pos->getFloorY();
 		$z = $pos->getFloorZ();
 
 		end($data);
 
-		for( $i = key($data); $i >= 0; $i-- ) // sqlite sucks.
+		for($i = key($data); $i >= 0; $i--) // sqlite sucks.
 		{
-			if( !isset($data[$i]) )
-			{
+			if(!isset($data[$i])){
 				continue;
 			}
 
@@ -232,137 +153,109 @@ class Manager extends PluginBase
 				$rg->getMin('x') <= $x and $x <= $rg->getMax('x') and
 				$rg->getMin('y') <= $y and $y <= $rg->getMax('y') and
 				$rg->getMin('z') <= $z and $z <= $rg->getMax('z')
-			) {
-				unset($data); return $rg;
+			){
+				unset($data);
+				return $rg;
 			}
 		}
 
-		unset($data); return NULL;
+		unset($data);
+		return null;
 	}
 
-
-	/**
-	 * @param  string $name
-	 *
-	 * @return Region | NULL
-	 */
-	function getRegionByName( string $name )
-	{
+	public function getRegionByName(string $name) : ?Region{
 		$name = strtolower($name);
 
-		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
-		{
+		foreach($this->getServer()->getWorldManager()->getWorlds() as $level){
 			$level = $level->getFolderName();
 
-			if( !isset($this->data[$level]) )
-			{
+			if(!isset($this->data[$level])){
 				continue;
 			}
 
 			$data = $this->data[$level];
 
-			if( count($data) == 0 )
-			{
-				unset($data); continue;
+			if(count($data) == 0){
+				unset($data);
+				continue;
 			}
 
-			foreach( $data as $rg )
-			{
-				if( $rg->getRegionName() != $name )
-				{
+			foreach($data as $rg){
+				if($rg->getRegionName() !== $name){
 					continue;
 				}
 
-				unset($data); return $rg;
+				unset($data);
+				return $rg;
 			}
 		}
 
-		unset($data); return NULL;
+		unset($data);
+		return null;
 	}
 
-
-	/**
-	 * @param  string   $nick
-	 * @param  string   $name
-	 * @param  Position $min
-	 * @param  Position $max
-	 */
-	function createRegion( string $nick, string $name, Position $min, Position $max )
-	{
+	public function createRegion(string $nick, string $name, Position $min, Position $max) : void{
 		$level = $min->getWorld()->getFolderName();
-		$nick  = strtolower($nick);
-		$name  = strtolower($name);
+		$nick = strtolower($nick);
+		$name = strtolower($name);
 
-		if( $this->getValue('full_height', 'config') === TRUE )
-		{
+		if($this->getValue('full_height', 'config') === true){
 			$min_y = 0;
 			$max_y = 256;
 		}
 
 		$data = [
-			'owner'  => $nick,
+			'owner' => $nick,
 			'member' => [],
-			'level'  => $level,
-			'min'    => [
+			'level' => $level,
+			'min' => [
 				'x' => $min->getX(),
 				'y' => $min_y ?? $min->getY(),
 				'z' => $min->getZ()
 			],
-			'max'    => [
+			'max' => [
 				'x' => $max->getX(),
 				'y' => $max_y ?? $max->getY(),
 				'z' => $max->getZ()
 			],
-			'flag'   => $this->getValue('default_flag', 'config')
+			'flag' => $this->getValue('default_flag', 'config')
 		];
 
 		$region = new Region($name, $data);
-		$event  = new RegionCreateEvent($this, $region);
+		$event = new RegionCreateEvent($this, $region);
 
 		$event->call();
 
-		if( $event->isCancelled() )
-		{
+		if($event->isCancelled()){
 			return;
 		}
-		
+
 		$this->data[$level][] = $region;
-		
+
 		unset($this->position[0][$nick]);
 		unset($this->position[1][$nick]);
 		$this->saveRegion($region);
 	}
 
-
-	/**
-	 * @param  string $name
-	 *
-	 * @return bool
-	 */
-	function removeRegion( string $name ): bool
-	{
+	public function removeRegion(string $name) : bool{
 		$name = strtolower($name);
 
-		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
-		{
+		foreach($this->getServer()->getWorldManager()->getWorlds() as $level){
 			$level = $level->getFolderName();
 
-			if( !isset($this->data[$level]) )
-			{
+			if(!isset($this->data[$level])){
 				continue;
 			}
 
 			$data = $this->data[$level];
 
-			if( count($data) == 0 )
-			{
-				unset($data); continue;
+			if(count($data) == 0){
+				unset($data);
+				continue;
 			}
 
-			foreach( $data as $key => $rg )
-			{
-				if( $rg->getRegionName() != $name )
-				{
+			foreach($data as $key => $rg){
+				if($rg->getRegionName() !== $name){
 					continue;
 				}
 
@@ -370,9 +263,8 @@ class Manager extends PluginBase
 
 				$event->call();
 
-				if( $event->isCancelled() )
-				{
-					return FALSE;
+				if($event->isCancelled()){
+					return false;
 				}
 
 				unset($this->data[$level][$key]);
@@ -382,57 +274,51 @@ class Manager extends PluginBase
 				$this->region->remove($name);
 				$this->region->save();
 
-				unset($data); return TRUE;
+				unset($data);
+				return true;
 			}
 		}
 
-		unset($data); return FALSE;
+		unset($data);
+		return false;
 	}
 
-
 	/**
-	 * @param  string $nick
-	 * @param  bool   $include_member
+	 * @param string $nick
+	 * @param bool   $include_member
 	 *
 	 * @return Region[]
 	 */
-	function getRegionList( string $nick, bool $include_member = false ): array
-	{
+	public function getRegionList(string $nick, bool $include_member = false) : array{
 		$nick = strtolower($nick);
-		$arr  = [];
+		$arr = [];
 
-		foreach( $this->getServer()->getWorldManager()->getWorlds() as $level )
-		{
+		foreach($this->getServer()->getWorldManager()->getWorlds() as $level){
 			$level = $level->getFolderName();
 
-			if( !isset($this->data[$level]) )
-			{
+			if(!isset($this->data[$level])){
 				continue;
 			}
 
 			$data = $this->data[$level];
 
-			if( count($data) == 0 )
-			{
-				unset($data); continue;
+			if(count($data) == 0){
+				unset($data);
+				continue;
 			}
-			
-			foreach( $data as $rg )
-			{
-				if( $rg->getOwner() == $nick )
-				{
+
+			foreach($data as $rg){
+				if($rg->getOwner() == $nick){
 					$arr[] = $rg;
 
 					continue;
 				}
 
-				if( !$include_member )
-				{
+				if(!$include_member){
 					continue;
 				}
 
-				if( !in_array($nick, $rg->getMemberList()) )
-				{
+				if(!in_array($nick, $rg->getMemberList())){
 					continue;
 				}
 
@@ -440,58 +326,39 @@ class Manager extends PluginBase
 			}
 		}
 
-		unset($data); return $arr;
+		unset($data);
+		return $arr;
 	}
 
-
-	/**
-	 * @todo   rewrite this piece of shit.
-	 *
-	 * @param  string $type
-	 * @param  string $key
-	 *
-	 * @return string | int | NULL
-	 */
-	function getValue( string $key, string $type = 'message' )
-	{
-		$type  = strtolower($type);
-		$key   = mb_strtolower($key);
+	public function getValue(string $key, string $type = 'message') : string|int|array|bool|null{
+		$type = strtolower($type);
+		$key = mb_strtolower($key);
 		$error = "Configuration error: пункт '$key' не найден в $type.yml. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/$type.yml) и перезагрузите сервер.";
 
-		if( $type == 'config' )
-		{
+		if($type == 'config'){
 			$value = $this->config->get($key, 'жопа');
 
-			if( $value === 'жопа' )
-			{
-				throw new Exception($error);
+			if($value === 'жопа'){
+				$this->getLogger()->error($error);
 			}
-		}
-
-		elseif( $type == 'group' )
-		{
+		}elseif($type == 'group'){
 			$value = $this->group->get($key);
 			$value = !$value ? $this->group->get('default') : $value;
 
-			if( !$value )
-			{
+			if(!$value){
 				$this->getLogger()->error($error);
 
 				$value = [
-					'max_size'       => 5000,
-					'max_count'      => 4,
-					'ignored_flag'   => [],
+					'max_size' => 5000,
+					'max_count' => 4,
+					'ignored_flag' => [],
 					'ignored_region' => []
 				];
 			}
-		}
-
-		else
-		{
+		}else{
 			$value = $this->message->get($key);
 
-			if( $value === FALSE )
-			{
+			if($value === false){
 				$this->getLogger()->error($error);
 
 				$value = "§l§c- §fGUARD §c- Произошла внутренняя ошибка§r";
@@ -501,49 +368,31 @@ class Manager extends PluginBase
 		return $value;
 	}
 
-
-	/**
-	 * @param Region $region
-	 */
-	function saveRegion( Region $region )
-	{
+	public function saveRegion(Region $region) : void{
 		$this->region->set($region->getRegionName(), $region->toData());
-		$this->region->save(TRUE);
+		$this->region->save();
 	}
 
+	public function calculateSize(Position $pos1, Position $pos2) : int{
+		$x = [min($pos1->getX(), $pos2->getX()), max($pos1->getX(), $pos2->getX())];
+		$y = [min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY())];
+		$z = [min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ())];
 
-	/**
-	 * @param  Position $pos1
-	 * @param  Position $pos2
-	 *
-	 * @return int
-	 */
-	function calculateSize( Position $pos1, Position $pos2 ): int
-	{
-		$x = [ min($pos1->getX(), $pos2->getX()), max($pos1->getX(), $pos2->getX()) ];
-		$y = [ min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY()) ];
-		$z = [ min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ()) ];
-
-		if( $this->getValue('full_height', 'config') === TRUE )
-		{
-			$y = [ 0, 1 ];
+		if($this->getValue('full_height', 'config') === true){
+			$y = [0, 1];
 		}
-		
+
 		return ($x[1] - $x[0]) * ($y[1] - $y[0]) * ($z[1] - $z[0]);
 	}
-
 
 	/**
 	 * @return string[]
 	 */
-	function getAllowedFlag( ): array
-	{
-		$list = array_map('strtolower', $this->getValue('allowed_flag', 'config'));
+	public function getAllowedFlag() : array{
+		$list = array_map('strtolower', (array) $this->getValue('allowed_flag', 'config'));
 
-		foreach( $list as $flag )
-		{
-			if( isset(self::DEFAULT_FLAG[$flag]) )
-			{
+		foreach($list as $flag){
+			if(isset(self::DEFAULT_FLAG[$flag])){
 				continue;
 			}
 
@@ -553,129 +402,90 @@ class Manager extends PluginBase
 		return $list;
 	}
 
-
-	/**
-	 * @param Player $player
-	 * @param string $message
-	 */
-	function sendWarning( Player $player, string $message )
-	{
-		if( empty($message) )
-		{
+	public function sendWarning(Player $player, string $message){
+		if(empty($message)){
 			return;
 		}
 
-		switch( $this->getValue('warn_type', 'config') )
-		{
-			case 0:  $player->sendPopup($message);   break;
-			case 1:  $player->sendMessage($message); break;
-			default: $player->sendTip($message);     break;
+		switch($this->getValue('warn_type', 'config')){
+			case 0:
+				$player->sendPopup($message);
+				break;
+			case 1:
+				$player->sendMessage($message);
+				break;
+			default:
+				$player->sendTip($message);
+				break;
 		}
 	}
 
-
 	/**
-	 * @todo   better manage permissions for size control.
-	 *
-	 * @param  Player $player
+	 * @param Player $player
 	 *
 	 * @return int[]
 	 */
-	function getGroupValue( Player $player ): array
-	{
-		if( isset($this->extension['pureperms']) )
-		{
+	public function getGroupValue(Player $player) : array{
+		if(isset($this->extension['pureperms'])){
 			$group = $this->extension['pureperms']->getUserDataMgr()->getGroup($player)->getName();
-		}
-
-		elseif( isset($this->extension['universalgroup']) )
-		{
+		}elseif(isset($this->extension['universalgroup'])){
 			$group = $this->extension['universalgroup']->getGroup($player->getName())->getId();
-		}
-
-		elseif( isset($this->extension['sexgroup']) )
-		{
+		}elseif(isset($this->extension['sexgroup'])){
 			$group = $this->extension['sexgroup']->getPlayerGroup($player->getName())->getId();
 		}
 
 		return $this->getValue($group ?? 'default', 'group');
 	}
 
-
-	/**
-	 *  _                 _
-	 * | | ___   __ _  __| |
-	 * | |/ _ \ / _' |/ _' |
-	 * | | (_) | (_) | (_) |
-	 * |_|\___/ \__,_|\__,_|
-	 *
-	 */
-	private function loadInstance( )
-	{
+	private function loadInstance() : void{
 		self::$instance = $this;
 	}
 
-
-	private function initProvider( )
-	{
+	private function initProvider(){
 		$folder = $this->getDataFolder();
-		
-		if( !is_dir($folder) )
-		{
+
+		if(!is_dir($folder)){
 			@mkdir($folder);
 		}
-		
+
 		$this->saveResource('group.yml');
 		$this->saveResource('config.yml');
 		$this->saveResource('message.yml');
-		
-		$this->group   = new Config($folder. 'group.yml');
-		$this->config  = new Config($folder. 'config.yml');
-		$this->message = new Config($folder. 'message.yml');
-		
-		$this->sign   = new Config($folder. 'sign.json');
-		$this->region = new Config($folder. 'region.json');
+
+		$this->group = new Config($folder . 'group.yml');
+		$this->config = new Config($folder . 'config.yml');
+		$this->message = new Config($folder . 'message.yml');
+
+		$this->sign = new Config($folder . 'sign.json');
+		$this->region = new Config($folder . 'region.json');
 
 		$this->sign->reload();
 		$this->region->reload();
-		
-		foreach( $this->region->getAll() as $name => $data )
-		{
+
+		foreach($this->region->getAll() as $name => $data){
 			/**
 			 * @todo check data on load.
 			 */
-			$rg    = new Region($name, $data);
+			$rg = new Region($name, $data);
 			$level = $rg->getLevelName();
 
 			$this->data[$level][] = $rg;
 		}
 	}
 
-
-	private function initListener( )
-	{
-		$listener = [
-			new PlayerGuard($this),
-			new BlockGuard($this),
-			new EntityGuard($this)
-		];
-		
-		foreach( $listener as $class )
-		{
-			$this->getServer()->getPluginManager()->registerEvents($class, $this);
-		}
+	private function initListener() : void{
+		(new BlockListener($this))->register();
+		(new EntityListener($this))->register();
+		(new PlayerListener($this))->register();
 	}
 
-
-	private function initCommand( )
-	{
+	private function initCommand() : void{
 		$command = new GuardCommand($this);
 
-		$map     = $this->getServer()->getCommandMap();
+		$map = $this->getServer()->getCommandMap();
 		$replace = $map->getCommand($command->getName());
 
-		if( isset($replace) )
-		{
+		if(isset($replace)){
 			$replace->setLabel('');
 			$replace->unregister($map);
 		}
@@ -683,9 +493,7 @@ class Manager extends PluginBase
 		$map->register($this->getName(), $command);
 	}
 
-
-	private function initExtension( )
-	{
+	private function initExtension() : void{
 		$list = [
 			'PurePerms',
 			'EconomyAPI',
@@ -693,15 +501,12 @@ class Manager extends PluginBase
 			'UniversalMoney',
 			'SexGroup'
 		];
-		
-		foreach( $list as $extension )
-		{
-			if( $this->getValue('allow_'. strtolower($extension), 'config') === TRUE )
-			{
+
+		foreach($list as $extension){
+			if($this->getValue('allow_' . strtolower($extension), 'config') === true){
 				$plugin = $this->getServer()->getPluginManager()->getPlugin($extension);
-				
-				if( isset($plugin) )
-				{
+
+				if(isset($plugin)){
 					$this->extension[strtolower($extension)] = $plugin;
 				}
 			}
