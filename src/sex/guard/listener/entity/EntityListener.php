@@ -57,7 +57,6 @@ class EntityListener{
 			if(in_array($flag, $val['ignored_flag'])){
 				if(!in_array($region->getRegionName(), $val['ignored_region'])){
 					$event = new FlagIgnoreEvent($api, $region, $flag, $entity);
-
 					$event->call();
 
 					if($event->isCancelled()){
@@ -71,7 +70,6 @@ class EntityListener{
 
 		if(!$region->getFlagValue($flag)){
 			$event = new FlagCheckByEntityEvent($api, $region, $flag, $entity, $target);
-
 			$event->call();
 
 			if($event->isCancelled()){

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\block;
 
-use pocketmine\block\Block;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use sex\guard\event\flag\FlagCheckByBlockEvent;
 use sex\guard\event\flag\FlagCheckByPlayerEvent;
 use sex\guard\event\flag\FlagIgnoreEvent;
@@ -32,7 +32,7 @@ class BlockListener{
 		}
 	}
 
-	protected function isFlagDenied(Block $block, string $flag, Player $player = null) : bool{
+	protected function isFlagDenied(Position $position, string $flag, Player $player = null) : bool{
 		$api = $this->getPlugin();
 
 		if(isset($player)){
@@ -41,7 +41,7 @@ class BlockListener{
 			}
 		}
 
-		$region = $api->getRegion($block->getPosition());
+		$region = $api->getRegion($position);
 
 		if(!isset($region)){
 			if($api->getValue('safe_mode', 'config') === true){
@@ -63,8 +63,7 @@ class BlockListener{
 			return false;
 		}
 
-		$event = new FlagCheckByBlockEvent($api, $region, $flag, $block, $player);
-
+		$event = new FlagCheckByBlockEvent($api, $region, $flag, $position, $player);
 		$event->call();
 
 		if($event->isCancelled()){
@@ -77,7 +76,6 @@ class BlockListener{
 			if(in_array($flag, $val['ignored_flag'])){
 				if(!in_array($region->getRegionName(), $val['ignored_region'])){
 					$event = new FlagIgnoreEvent($api, $region, $flag, $player);
-
 					$event->call();
 
 					if($event->isCancelled()){
@@ -97,8 +95,7 @@ class BlockListener{
 
 		if($nick !== $region->getOwner()){
 			if(!in_array($nick, $region->getMemberList())){
-				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $block);
-
+				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $position);
 				$event->call();
 
 				if($event->isCancelled()){
@@ -106,7 +103,7 @@ class BlockListener{
 				}
 
 				if($flag == 'break'){
-					$pos = $player->getPosition()->subtract($block->getPosition()->getX(), $block->getPosition()->getY(), $block->getPosition()->getZ());
+					$pos = $player->getPosition()->subtract($position->getX(), $position->getY(), $position->getZ());
 					$pos->y = abs($pos->y + 2);
 					$pos = $pos->divide(8);
 

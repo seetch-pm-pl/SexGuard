@@ -15,8 +15,9 @@ class LeavesDecayListener extends BlockListener implements Listener{
 		}
 
 		$block = $event->getBlock();
+		$blockPos = $block->getPosition();
 
-		if($this->isFlagDenied($block, 'decay')){
+		if($this->isFlagDenied($blockPos, 'decay')){
 			$event->cancel();
 		}
 	}

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace sex\guard\event\flag;
 
-use pocketmine\block\Block;
 use pocketmine\event\Cancellable;
 use pocketmine\event\CancellableTrait;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use sex\guard\data\Region;
 use sex\guard\Manager;
 
@@ -15,7 +15,7 @@ class FlagCheckByPlayerEvent extends FlagCheckEvent implements Cancellable{
 
 	use CancellableTrait;
 
-	public function __construct(Manager $main, Region $region, string $flag, private Player $player, private ?Block $block = null){
+	public function __construct(Manager $main, Region $region, string $flag, private Player $player, private ?Position $position = null){
 		parent::__construct($main, $region, $flag);
 	}
 
@@ -23,7 +23,7 @@ class FlagCheckByPlayerEvent extends FlagCheckEvent implements Cancellable{
 		return $this->player;
 	}
 
-	public function getBlock() : Block{
-		return $this->block;
+	public function getPosition() : ?Position{
+		return $this->position;
 	}
 }

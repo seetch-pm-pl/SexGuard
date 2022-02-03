@@ -15,9 +15,10 @@ class PlayerBucketEmptyListener extends PlayerListener implements Listener{
 		}
 
 		$player = $event->getPlayer();
-		$block = $event->getBlockClicked();
+		$clickedBlock = $event->getBlockClicked();
+		$clickedBlockPos = $clickedBlock->getPosition();
 
-		if($this->isFlagDenied($player, 'bucket', $block)){
+		if($this->isFlagDenied($player, 'bucket', $clickedBlockPos)){
 			$event->cancel();
 		}
 	}

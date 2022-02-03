@@ -17,8 +17,9 @@ class SignChangeListener extends BlockListener implements Listener{
 
 		$player = $event->getPlayer();
 		$block = $event->getSign();
+		$blockPos = $block->getPosition();
 
-		if($this->isFlagDenied($block, 'place', $player)){
+		if($this->isFlagDenied($blockPos, 'place', $player)){
 			$event->cancel();
 			return;
 		}
@@ -37,7 +38,7 @@ class SignChangeListener extends BlockListener implements Listener{
 			return;
 		}
 
-		$region = $api->getRegion($block->getPosition());
+		$region = $api->getRegion($blockPos);
 
 
 		if(!isset($region)){
@@ -56,7 +57,7 @@ class SignChangeListener extends BlockListener implements Listener{
 		if($sign !== 'жопа'){
 			$pos = $sign['pos'];
 
-			if($pos[0] !== $block->getPosition()->getX() or $pos[1] !== $block->getPosition()->getY() or $pos[2] !== $block->getPosition()->getZ()){
+			if($pos[0] !== $blockPos->getX() or $pos[1] !== $blockPos->getY() or $pos[2] !== $blockPos->getZ()){
 				$api->sendWarning($player, $api->getValue('sell_exist'));
 				return;
 			}
@@ -75,8 +76,8 @@ class SignChangeListener extends BlockListener implements Listener{
 		$event->setNewText(new SignText($lines));
 
 		$data = [
-			'pos' => [$block->getPosition()->getX(), $block->getPosition()->getY(), $block->getPosition()->getZ()],
-			'level' => $block->getPosition()->getWorld()->getFolderName(),
+			'pos' => [$blockPos->getX(), $blockPos->getY(), $blockPos->getZ()],
+			'level' => $blockPos->getWorld()->getFolderName(),
 			'price' => $price
 		];
 

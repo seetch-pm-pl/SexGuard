@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\player;
 
-use pocketmine\block\Block;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use sex\guard\event\flag\FlagCheckByPlayerEvent;
 use sex\guard\event\flag\FlagIgnoreEvent;
 use sex\guard\Manager;
@@ -34,14 +34,14 @@ class PlayerListener{
 		}
 	}
 
-	protected function isFlagDenied(Player $player, string $flag, Block $block = null) : bool{
+	protected function isFlagDenied(Player $player, string $flag, Position $position = null) : bool{
 		if($player->hasPermission('sexguard.noflag')){
 			return false;
 		}
 
 		$api = $this->getPlugin();
 
-		$region = $api->getRegion($block->getPosition() ?? $player->getPosition());
+		$region = $api->getRegion($position ?? $player->getPosition());
 
 		if(!isset($region)){
 			return false;
@@ -56,7 +56,6 @@ class PlayerListener{
 		if(in_array($flag, $val['ignored_flag'])){
 			if(!in_array($region->getRegionName(), $val['ignored_region'])){
 				$event = new FlagIgnoreEvent($api, $region, $flag, $player);
-
 				$event->call();
 
 				if($event->isCancelled()){
@@ -71,8 +70,7 @@ class PlayerListener{
 
 		if($nick !== $region->getOwner()){
 			if(!in_array($nick, $region->getMemberList())){
-				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $block);
-
+				$event = new FlagCheckByPlayerEvent($api, $region, $flag, $player, $position);
 				$event->call();
 
 				if($event->isCancelled()){
