@@ -24,7 +24,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		$frameTile = $world->getTile($clickedBlockPos);
 
 		if($frameTile instanceof ItemFrame){
-			if($this->isFlagDenied($player, 'frame', $clickedBlock)){
+			if($this->isFlagDenied($player, 'frame', $clickedBlockPos)){
 				$event->cancel();
 			}
 		}
@@ -50,7 +50,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 				$pos = new Vector3($data['pos'][0], $data['pos'][1], $data['pos'][2]);
 				$lvl = $data['level'];
 
-				if($block->getPosition()->equals($pos) and $block->getPosition()->getWorld()->getFolderName() == $lvl){
+				if($clickedBlockPos->equals($pos) and $clickedBlockPos->getWorld()->getFolderName() == $lvl){
 					if(isset($api->extension['economyapi'])){
 						$economy = $api->extension['economyapi'];
 						$money = $economy->myMoney($nick);
@@ -65,7 +65,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 						return;
 					}
 
-					$region = $api->getRegion($block->getPosition());
+					$region = $api->getRegion($clickedBlockPos);
 
 					if(!isset($region)){
 						return;
@@ -94,7 +94,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 					$economy->addMoney($region->getOwner(), $price);
 
 					$region->setOwner($nick);
-					$block->getPosition()->getWorld()->setBlock($pos, VanillaBlocks::AIR());
+					$clickedBlockPos->getWorld()->setBlock($pos, VanillaBlocks::AIR());
 
 					$api->sign->remove($name);
 					$api->sign->save();
@@ -112,7 +112,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		if($item->getId() == ItemIds::STICK){
 			$event->cancel();
 
-			$region = $api->getRegion($block->getPosition());
+			$region = $api->getRegion($clickedBlockPos);
 
 			if(!isset($region)){
 				$api->sendWarning($player, $api->getValue('rg_not_exist'));
@@ -130,7 +130,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		if($item->getId() == ItemIds::WOODEN_AXE){
 			$event->cancel();
 
-			$region = $api->getRegion($block->getPosition());
+			$region = $api->getRegion($clickedBlockPos);
 
 			if($region !== null and !$player->hasPermission('sexguard.all')){
 				if($region->getOwner() !== $nick){
@@ -140,21 +140,21 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			}
 
 			if(!isset($api->position[0][$nick])){
-				$api->position[0][$nick] = $block->getPosition();
+				$api->position[0][$nick] = $clickedBlockPos;
 
 				$api->sendWarning($player, $api->getValue('pos_1_set'));
 				return;
 			}
 
 			if(!isset($api->position[1][$nick])){
-				if($api->position[0][$nick]->getWorld()->getFolderName() !== $block->getPosition()->getWorld()->getFolderName()){
+				if($api->position[0][$nick]->getWorld()->getFolderName() !== $clickedBlockPos->getWorld()->getFolderName()){
 					unset($api->position[0][$nick]);
 					$api->sendWarning($player, $api->getValue('pos_another_world'));
 					return;
 				}
 
 				$val = $api->getGroupValue($player);
-				$size = $api->calculateSize($api->position[0][$nick], $block->getPosition());
+				$size = $api->calculateSize($api->position[0][$nick], $clickedBlockPos);
 
 				if($size > $val['max_size'] and !$player->hasPermission('sexguard.all')){
 					$msg = str_replace('{max_size}', (array) $val['max_size'], $api->getValue('rg_oversize'));
@@ -163,14 +163,14 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 					return;
 				}
 
-				$api->position[1][$nick] = $block->getPosition();
+				$api->position[1][$nick] = $clickedBlockPos;
 
 				$api->sendWarning($player, $api->getValue('pos_2_set'));
 				return;
 			}
 
 			if(isset($api->position[0][$nick]) and isset($api->position[1][$nick])){
-				$api->position[0][$nick] = $block->getPosition();
+				$api->position[0][$nick] = $clickedBlockPos;
 
 				unset($api->position[1][$nick]);
 				$api->sendWarning($player, $api->getValue('pos_1_set'));
@@ -211,7 +211,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			}
 		}
 
-		if($this->isFlagDenied($player, $flag, $block)){
+		if($this->isFlagDenied($player, $flag, $clickedBlockPos)){
 			$event->cancel();
 		}
 	}

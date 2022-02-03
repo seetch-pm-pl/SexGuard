@@ -18,13 +18,14 @@ class BlockBreakListener extends BlockListener implements Listener{
 
 		$player = $event->getPlayer();
 		$block = $event->getBlock();
+		$blockPos = $block->getPosition();
 
-		if($this->isFlagDenied($block, 'break', $player)){
+		if($this->isFlagDenied($blockPos, 'break', $player)){
 			$event->cancel();
 			return;
 		}
 
-		if($block->getId() == BlockLegacyIds::CHEST and $this->isFlagDenied($block, 'chest', $player)){
+		if($block->getId() == BlockLegacyIds::CHEST and $this->isFlagDenied($blockPos, 'chest', $player)){
 			$event->cancel();
 			return;
 		}

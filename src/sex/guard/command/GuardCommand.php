@@ -10,6 +10,7 @@ use pocketmine\player\Player;
 use sex\guard\command\argument\Argument;
 use sex\guard\command\argument\CreateArgument;
 use sex\guard\command\argument\FlagArgument;
+use sex\guard\command\argument\InfoArgument;
 use sex\guard\command\argument\ListArgument;
 use sex\guard\command\argument\MemberArgument;
 use sex\guard\command\argument\OwnerArgument;
@@ -38,7 +39,8 @@ class GuardCommand extends Command{
 			new OwnerArgument($plugin),
 			new FlagArgument($plugin),
 			new ListArgument($plugin),
-			new WandArgument($plugin)
+			new WandArgument($plugin),
+			new InfoArgument($plugin)
 		];
 
 		$this->setPermission(self::PERMISSION);
