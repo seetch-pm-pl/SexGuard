@@ -6,6 +6,7 @@ namespace sex\guard\command\argument;
 
 use pocketmine\player\Player;
 use pocketmine\world\Position;
+use sex\guard\utils\HighlightingManager;
 
 class CreateArgument extends Argument{
 
@@ -109,6 +110,10 @@ class CreateArgument extends Argument{
 					}
 				}
 			}
+		}
+
+		if(isset($main->structure[$nick])){
+			HighlightingManager::clear($nick, $main->structure[$nick]);
 		}
 
 		$main->createRegion($nick, $name, $min, $max);

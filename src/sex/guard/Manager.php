@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace sex\guard;
 
 use Exception;
+use pocketmine\block\tile\TileFactory;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -16,6 +17,7 @@ use sex\guard\event\region\RegionRemoveEvent;
 use sex\guard\listener\block\BlockListener;
 use sex\guard\listener\entity\EntityListener;
 use sex\guard\listener\player\PlayerListener;
+use sex\guard\utils\CompoundTile;
 
 class Manager extends PluginBase{
 
@@ -54,6 +56,7 @@ class Manager extends PluginBase{
 
 	/** @var Position[] */
 	public array $position = [];
+	public array $structure = [];
 
 	/** @var PluginBase[] */
 	public array $extension = [];
@@ -74,6 +77,8 @@ class Manager extends PluginBase{
 		$this->initListener();
 		$this->initCommand();
 		$this->initExtension();
+
+		TileFactory::getInstance()->register(CompoundTile::class);
 	}
 
 	protected function onDisable() : void{

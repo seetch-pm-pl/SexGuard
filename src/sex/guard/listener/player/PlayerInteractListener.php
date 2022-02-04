@@ -11,6 +11,8 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
+use sex\guard\utils\HighlightingManager;
 
 class PlayerInteractListener extends PlayerListener implements Listener{
 
@@ -164,6 +166,25 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 				}
 
 				$api->position[1][$nick] = $clickedBlockPos;
+
+				$origPos1 = $api->position[0][$nick];
+				$origPos2 = $api->position[1][$nick];
+
+				$minX = min($origPos1->getX(), $origPos2->getX());
+				$maxX = max($origPos1->getX(), $origPos2->getX());
+				$minY = max(min($origPos1->getY(), $origPos2->getY()), World::Y_MIN);
+				$maxY = min(max($origPos1->getY(), $origPos2->getY()), World::Y_MAX - 1);
+				$minZ = min($origPos1->getZ(), $origPos2->getZ());
+				$maxZ = max($origPos1->getZ(), $origPos2->getZ());
+
+				$pos1 = new Vector3($minX, $minY, $minZ);
+				$pos2 = new Vector3($maxX, $maxY, $maxZ);
+
+				if(isset($api->structure[$nick])){
+					HighlightingManager::clear($nick, $api->structure[$nick]);
+				}
+
+				$api->structure[$nick] = HighlightingManager::highlightStaticCube($nick, $world->getFolderName(), $pos1, $pos2, new Vector3(floor(($pos2->getX() + $pos1->getX()) / 2), World::Y_MIN, floor(($pos2->getZ() + $pos1->getZ()) / 2)));
 
 				$api->sendWarning($player, $api->getValue('pos_2_set'));
 				return;
