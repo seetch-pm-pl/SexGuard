@@ -389,7 +389,7 @@ class Manager extends PluginBase{
 	 * @return string[]
 	 */
 	public function getAllowedFlag() : array{
-		$list = array_map('strtolower', (array) $this->getValue('allowed_flag', 'config'));
+		$list = array_map('strtolower', $this->getValue('allowed_flag', 'config'));
 
 		foreach($list as $flag){
 			if(isset(self::DEFAULT_FLAG[$flag])){

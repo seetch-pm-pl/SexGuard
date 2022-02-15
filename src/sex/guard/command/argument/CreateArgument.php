@@ -51,7 +51,7 @@ class CreateArgument extends Argument{
 
 		if(count($main->getRegionList($nick)) >= $val['max_count']){
 			if(!$sender->hasPermission('sexguard.all')){
-				$sender->sendMessage(str_replace('{max_count}', (array) $val['max_count'], $main->getValue('rg_overcount')));
+				$sender->sendMessage(str_replace('{max_count}', $val['max_count'], $main->getValue('rg_overcount')));
 				return false;
 			}
 		}
@@ -60,7 +60,7 @@ class CreateArgument extends Argument{
 		$pos2 = $main->position[1][$nick];
 
 		if($main->calculateSize($pos1, $pos2) > $val['max_size'] and !$sender->hasPermission('sexguard.all')){
-			$sender->sendMessage(str_replace('{max_size}', (array) $val['max_size'], $main->getValue('rg_oversize')));
+			$sender->sendMessage(str_replace('{max_size}', $val['max_size'], $main->getValue('rg_oversize')));
 			return false;
 		}
 

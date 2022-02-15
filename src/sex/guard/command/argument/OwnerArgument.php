@@ -48,7 +48,7 @@ class OwnerArgument extends Argument{
 		$val = $main->getGroupValue($player);
 
 		if(count($main->getRegionList($owner)) > $val['max_count']){
-			$sender->sendMessage(str_replace('{max_count}', (array) $val['max_count'], $main->getValue('rg_overcount')));
+			$sender->sendMessage(str_replace('{max_count}', $val['max_count'], $main->getValue('rg_overcount')));
 			return false;
 		}
 
