@@ -15,7 +15,7 @@ use sex\guard\Manager;
 
 class Region{
 
-	public function __construct(private string $name, private array $property = []){
+	public function __construct(private string|int $name, private array $property = []){
 		$event = new RegionLoadEvent(Manager::getInstance(), $this);
 		$event->call();
 	}
