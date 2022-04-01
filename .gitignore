@@ -218,3 +218,10 @@ pip-log.txt
 
 /phpstan/vendor/
 /phpstan/composer.lock
+
+#Plugin files
+config.yml
+group.yml
+message.yml
+region.json
+sign.json
