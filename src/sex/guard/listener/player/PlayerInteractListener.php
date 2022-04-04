@@ -79,14 +79,14 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 					$val = $api->getGroupValue($player);
 
 					if(count($api->getRegionList($nick)) > $val['max_count']){
-						$api->sendWarning($player, str_replace('{max_count}', $val['max_count'], $api->getValue('rg_overcount')));
+						$api->sendWarning($player, str_replace('{max_count}', (string) $val['max_count'], $api->getValue('rg_overcount')));
 						return;
 					}
 
 					$price = $data['price'];
 
 					if($money < $price){
-						$api->sendWarning($player, str_replace('{price}', $price, $api->getValue('player_have_not_money')));
+						$api->sendWarning($player, str_replace('{price}', (string) $price, $api->getValue('player_have_not_money')));
 						return;
 					}
 
@@ -157,7 +157,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 				$size = $api->calculateSize($api->position[0][$nick], $clickedBlockPos);
 
 				if($size > $val['max_size'] and !$player->hasPermission('sexguard.all')){
-					$msg = str_replace('{max_size}', $val['max_size'], $api->getValue('rg_oversize'));
+					$msg = str_replace('{max_size}', (string) $val['max_size'], $api->getValue('rg_oversize'));
 
 					$api->sendWarning($player, $msg);
 					return;
