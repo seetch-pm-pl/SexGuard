@@ -1,7 +1,7 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/seetch-pm-pl/SexGuard
 branches:
 - master
-- next-major
+- dev
 projects:
   SexGuard:
     path: ""
