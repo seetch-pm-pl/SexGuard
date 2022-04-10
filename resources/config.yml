@@ -1,204 +1,63 @@
-###               ____                    _
-#  ____ _____  __/ ___\_   _  __ _ _ ____| |
-# / __// _ \ \/ / /  _| | | |/ _' | '_/ _' |
-# \__ \  __/>  <\ \_| | |_| | (_) | || (_) |
-# /___/\___/_/\_\\____/\___/ \__,_|_| \__,_|
-#
-#          MAIN CONFIGURATION FILE
-###
-# АВТОР:   sex_KAMAZ
-# КОНТАКТ: vk.com/infernopage
-#          t.me/sex_kamaz
-# ПОМОЩЬ:  t.me/joinchat/EbZB3BKGfsu0DdbDNmpPjg
-###
-# РАЗРЕШЕНИЯ:
-#   sexguard.command.rg: доступ к основной команде.
-#     по-умолчанию:      для всех игроков.
-#
-#   sexguard.noflag: возможность игнорировать флаги.
-#     по-умолчанию:  для операторов.
-#
-#   sexguard.all:   полный доступ.
-#     по-умолчанию: для операторов.
-###
-# ДОПОЛНИТЕЛЬНЫЕ ПЛАГИНЫ:
-#   PurePerms:  контроль размера и количества
-#               регионов для групп.
-#   UniGroup:   альтернативный менеджер групп.
-#   EconomyAPI: покупка и продажа регионов.
-#   UniMoney:   альтернативная экономика.
-###
-# ОШИБКИ В РАБОТЕ ПЛАГИНА?
-#   Убедитесь в том, что случайно
-#   не удалили один из пунктов
-#   настроек.
-#   Для возвращения конфига в его
-#   нормальное состояние просто
-#   удалите его - он восстановится
-#   при включении плагина.
-###
-sign: U2V4R3VhcmQtMS4zLjM=
+---
+# Configuration version, don't edit this.
+config-version: 1.4.0
 
+language: ru
 
-###
-# СВЯЗЬ С PurePerms:
-#   Разрешить плагину работать с менеджером разрешений
-#   для определения размеров и количества регионов для
-#   каждой (или отдельной) из его групп.
-#   В противном случае будет использоваться
-#   пункт default в group.yml для всех игроков.
-#   Настроить группы можно в group.yml.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_pureperms: false
-###
-# СВЯЗЬ С UniGroup:
-#   Разрешить плагину работать с альтернативным
-#   менеджером групп.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_universalgroup: false
-###
-# СВЯЗЬ С SexGroup:
-#   Разрешить плагину работать с альтернативным
-#   менеджером групп.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_sexgroup: false
+# The support of the Permission Manager plugin allows you to determine the size and number of regions for each (or separate) of its groups.
+# Otherwise, the default element in group.yml will be used for all players.
+# You can setup groups in groups.yml.
+pureperms-support: false
+universalgroup-support: false
+sexgroup-support: false
 
+# The support of the Economy plugin allows you to work with the economy to be able to sell regions.
+economyapi-support: false
+universalmoney-support: false
+econ-support: false
 
-###
-# СВЯЗЬ С EconomyAPI:
-#   Разрешить плагину работать с экономикой
-#   для возможности продажи регионов.
-#   Актуально для roleplay и survival.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_economyapi: false
-###
-# СВЯЗЬ С UniMoney:
-#   Разрешить плагину работать с альтернативной
-#   экономикой.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_universalmoney: false
-###
-# СВЯЗЬ С Econ:
-#   Разрешить плагину работать с альтернативной
-#   экономикой.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-allow_econ: false
-###
-# ПРОДАЖА РЕГИОНА ЧЕРЕЗ ТАБЛИЧКУ:
-# (требуется связь с экономикой)
-#   Разрешить владельцам продавать
-#   свои регионы через табличку.
-#   Актуально для создания квартир.
-###
-# ФОРМА ОФОРМЛЕНИЯ ТАБЛИЧКИ:
-#   1 строка: sell region
-#   2 строка: <цена>
-#   3 строка:
-#   4 строка:
-###
-# АКТИВИРОВАТЬ: true
-# ВЫКЛЮЧИТЬ:    false
-allow_sell: false
-###
-# ПЛАТА ЗА СОЗДАНИЕ РЕГИОНА:
-# (требуется связь с экономикой)
-#   Установить обязательную плату для игроков
-#   без полного доступа за создание нового региона
-#   при помощи команды.
-###
-# РАЗРЕШИТЬ: true
-# ЗАПРЕТИТЬ: false
-pay_for_region: false
-###
-# ЦЕНА СОЗДАНИЯ НОВОГО РЕГИОНА:
-# (требуется разрешить параметр платы за регион)
-#   Установить цену за создание нового региона
-#   игрокам без полного доступа.
-price: 200
+# Allow owners to sell their regions through a sign. Relevant for creating hotels.
+# Sign format:
+# 1 line: sell region
+# 2 line: price
+region-sell: false
 
+# Set a mandatory fee for players without full access for creating a new region with the help of a team.
+region-create-paid: false
+# The price of creating a region (if the parameter is higher than true).
+region-create-price: 100
 
-###
-# БЕЗОПАСНЫЙ РЕЖИМ:
-#   Запрещает игрокам без полного доступа
-#   ставить и ломать блоки, пока они
-#   находятся вне региона с разрешенным
-#   на то флагом, либо вне своего региона.
-#   Актуально для roleplay и minigames.
-###
-# АКТИВИРОВАТЬ: true
-# ВЫКЛЮЧИТЬ:    false
-safe_mode: false
+# Prohibits players without full access to put and break blocks while they are outside the region with the flag allowed for that, or outside their region.
+safe-mode: false
 
+# In this mode, each new region will be created without taking into account the height (like a chunk).
+# I don't know why anyone needs this feature, but creating regions with it is really convenient.
+# Please note that in the size settings regions instead of their volume in blocks will be the area is calculated (excluding height).
+full-height: false
 
-###
-# РЕЖИМ РЕГИОНОВ ВО ВСЮ ВЫСОТУ:
-#   В этом режиме каждый новый регион
-#   будет создаваться без учета высоты
-#   (как чанк).
-#   Не знаю, нахрена кому-либо нужна эта фича,
-#   но создавать регионы с ней действительно
-#   удобно.
-# Обратите внимание, что в настройках размера
-# регионов вместо их объема в блоках будет
-# высчитываться площадь (без учета высоты).
-###
-# АКТИВИРОВАТЬ: true
-# ВЫКЛЮЧИТЬ:    false
-full_height: false
+# A way to notify players when actions within regions are banned.
+# Popup - 0, Message - 1, Tip - 2.
+notification-type: 2
 
-
-###
-# ТИП ОПОВЕЩЕНИЯ:
-#   Способ оповещения игроков при
-#   запрете действий внутри регионов.
-###
-# POPUP:   0
-# MESSAGE: 1
-# TIP:     2
-warn_type: 2
-
-
-###
-# ФЛАГИ:
-#   Параметры игры внутри регионов.
-###
-# INTERACT: открывание жел. дверей, нажатие кнопок и т.п.
-# TELEPORT: телепортация из региона.
-# COMBUST:  возгорание существ.
-# EXPLODE:  любые взрывы внутри региона.
-# CHANGE:   изменение региона существами (падающий песок и т.п.).
-# BUCKET:   использование ведер.
-# DAMAGE:   получение урона от внешнего мира.
-# CHEST:    доступ к сундукам.
-# FRAME:    доступ к рамкам.
-# PLACE:    возможность ставить блоки.
-# BREAK:    возможность ломать блоки.
-# SLEEP:    возможность ложиться в кровать.
-# DECAY:    разрешить исчезать листве с деревьев.
-# DROP:     возможность выбрасывать вещи.
-# CHAT:     отправка сообщений в чат.
-# PVP:      возможность наносить урон игрокам.
-# MOB:      возможность наносить урон существам.
-###
-# СТАНДАРТНЫЕ ФЛАГИ:
-#   Стандартные значения флагов
-#   при создании нового региона.
-###
-# ВКЛЮЧИТЬ:  true
-# ВЫКЛЮЧИТЬ: false
-default_flag:
+# Standard flag values when creating a new region.
+# interact: opening the yellow doors, pressing buttons, etc.
+# teleport: teleportation from the region.
+# combust:  igniting creatures.
+# explode:  any explosions inside the region.
+# change:   changing the region by creatures (falling sand, etc.).
+# bucket:   using buckets.
+# damage:   taking damage from the outside world.
+# chest:    access to chests.
+# frame:    access to the frames.
+# place:    the ability to place blocks.
+# break:    the ability to break blocks.
+# sleep:    the ability to go to bed.
+# decay:    allow foliage to disappear from trees.
+# drop:     the ability to throw things away.
+# chat:     sending messages to the chat.
+# pvp:      the ability to deal damage to players.
+# mob:      ability to damage creatures.
+default-flags:
   interact: true
   teleport: true
   combust: false
@@ -216,32 +75,26 @@ default_flag:
   chat: true
   pvp: false
   mob: true
-###
-# РЕДАКТИРУЕМЫЕ ФЛАГИ:
-#   Флаги, которые можно переназначить
-#   в игре посредством /rg flag
-###
-# Чтобы запретить игрокам изменять
-# какой-либо флаг, просто удалите или
-# закомментируйте его.
-# Но только после того, как создадите
-# сервисные регионы (спавн, арена и т.п.)
-# (поставьте # в начале строки)
-allowed_flag:
-- interact
-- teleport
-- combust
-- explode
-- change
-- bucket
-- damage
-- chest
-- frame
-- place
-- break
-- sleep
-- decay
-- drop
-- chat
-- pvp
-- mob
+
+# Flags that can be reassigned in the game via /rg flag.
+# To prevent players from changing any flag, simply delete or comment it out.
+# But only after you create service regions (spawn, arena, etc.)
+allowed-flags:
+  - interact
+  - teleport
+  - combust
+  - explode
+  - change
+  - bucket
+  - damage
+  - chest
+  - frame
+  - place
+  - break
+  - sleep
+  - decay
+  - drop
+  - chat
+  - pvp
+  - mob
+...

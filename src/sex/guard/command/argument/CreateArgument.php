@@ -50,9 +50,9 @@ class CreateArgument extends Argument{
 
 		$val = $main->getGroupValue($sender);
 
-		if(count($main->getRegionList($nick)) >= $val['max_count']){
+		if(count($main->getRegionList($nick)) >= $val['max-count']){
 			if(!$sender->hasPermission('sexguard.all')){
-				$sender->sendMessage(str_replace('{max_count}', $val['max_count'], $main->getValue('rg_overcount')));
+				$sender->sendMessage(str_replace('{max_count}', $val['max-count'], $main->getValue('rg_overcount')));
 				return false;
 			}
 		}
@@ -60,8 +60,8 @@ class CreateArgument extends Argument{
 		$pos1 = $main->position[0][$nick];
 		$pos2 = $main->position[1][$nick];
 
-		if($main->calculateSize($pos1, $pos2) > $val['max_size'] and !$sender->hasPermission('sexguard.all')){
-			$sender->sendMessage(str_replace('{max_size}', $val['max_size'], $main->getValue('rg_oversize')));
+		if($main->calculateSize($pos1, $pos2) > $val['max-size'] and !$sender->hasPermission('sexguard.all')){
+			$sender->sendMessage(str_replace('{max_size}', $val['max-size'], $main->getValue('rg_oversize')));
 			return false;
 		}
 
@@ -69,7 +69,7 @@ class CreateArgument extends Argument{
 		$y = [min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY())];
 		$z = [min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ())];
 
-		if($main->getValue('full_height', 'config') === true){
+		if($main->getValue('full-height', 'config') === true){
 			$y = [0, 256];
 		}
 
@@ -87,7 +87,7 @@ class CreateArgument extends Argument{
 			}
 		}
 
-		if($main->getValue('pay_for_region', 'config') === true){
+		if($main->getValue('region-create-paid', 'config') === true){
 			if(isset($main->extension['economyapi'])){
 				$economy = $main->extension['economyapi'];
 				$money = $economy->myMoney($nick);
@@ -105,7 +105,7 @@ class CreateArgument extends Argument{
 
 			if(isset($economy)){
 				if(!$sender->hasPermission('sexguard.all')){
-					$price = $main->getValue('price', 'config');
+					$price = $main->getValue('region-create-price', 'config');
 
 					if($money >= $price){
 						if($economy instanceof EconAPI){

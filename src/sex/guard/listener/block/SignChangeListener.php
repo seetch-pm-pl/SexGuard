@@ -34,7 +34,7 @@ class SignChangeListener extends BlockListener implements Listener{
 
 		$api = $this->getPlugin();
 
-		if($api->getValue('allow_sell', 'config') === false){
+		if($api->getValue('region-sell', 'config') === false){
 			return;
 		}
 

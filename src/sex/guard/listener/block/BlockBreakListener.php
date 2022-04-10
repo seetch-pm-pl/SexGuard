@@ -36,7 +36,7 @@ class BlockBreakListener extends BlockListener implements Listener{
 
 		$api = $this->getPlugin();
 
-		if(count($api->sign->getAll()) > 0 or $api->getValue('allow_sell', 'config') === true){
+		if(count($api->sign->getAll()) > 0 or $api->getValue('region-sell', 'config') === true){
 			foreach($api->sign->getAll() as $name => $data){
 				$pos = new Vector3($data['pos'][0], $data['pos'][1], $data['pos'][2]);
 				$lvl = $data['level'];

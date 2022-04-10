@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace sex\guard;
 
-use Exception;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -19,9 +18,7 @@ use sex\guard\listener\player\PlayerListener;
 
 class Manager extends PluginBase{
 
-	const CONFIGURATION_SIGN = 'U2V4R3VhcmQtMS4zLjM=';
-
-	const DEFAULT_FLAG = [
+	public const DEFAULT_FLAG = [
 		'interact' => true,
 		'teleport' => true,
 		'combust' => false,
@@ -61,14 +58,19 @@ class Manager extends PluginBase{
 	public Config $sign;
 
 	protected function onLoad() : void{
+		foreach($this->getResources() as $resource){
+			$this->saveResource($resource->getFilename());
+		}
+
 		$this->loadInstance();
 	}
 
 	protected function onEnable() : void{
 		$this->initProvider();
 
-		if($this->getValue('sign', 'config') !== self::CONFIGURATION_SIGN){
-			throw new Exception("Configuration error: использование старой версии конфига. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/config.yml) и перезагрузите сервер.");
+		if($this->getDescription()->getVersion() !== $this->getValue('config-version', 'config')){
+			$this->getLogger()->warning("An outdated config was provided...");
+			$this->getServer()->getPluginManager()->disablePlugin($this);
 		}
 
 		$this->initListener();
@@ -199,7 +201,7 @@ class Manager extends PluginBase{
 		$nick = strtolower($nick);
 		$name = strtolower($name);
 
-		if($this->getValue('full_height', 'config') === true){
+		if($this->getValue('full-height', 'config') === true){
 			$min_y = 0;
 			$max_y = 256;
 		}
@@ -218,7 +220,7 @@ class Manager extends PluginBase{
 				'y' => $max_y ?? $max->getY(),
 				'z' => $max->getZ()
 			],
-			'flag' => $this->getValue('default_flag', 'config')
+			'flag' => $this->getValue('default-flags', 'config')
 		];
 
 		$region = new Region($name, $data);
@@ -291,6 +293,7 @@ class Manager extends PluginBase{
 	 */
 	public function getRegionList(string $nick, bool $include_member = false) : array{
 		$nick = strtolower($nick);
+		$nick = strtolower($nick);
 		$arr = [];
 
 		foreach($this->getServer()->getWorldManager()->getWorlds() as $level){
@@ -336,9 +339,9 @@ class Manager extends PluginBase{
 		$error = "Configuration error: пункт '$key' не найден в $type.yml. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/$type.yml) и перезагрузите сервер.";
 
 		if($type == 'config'){
-			$value = $this->config->get($key, 'жопа');
+			$value = $this->config->get($key, '342');
 
-			if($value === 'жопа'){
+			if($value == 342){
 				$this->getLogger()->error($error);
 			}
 		}elseif($type == 'group'){
@@ -349,10 +352,10 @@ class Manager extends PluginBase{
 				$this->getLogger()->error($error);
 
 				$value = [
-					'max_size' => 5000,
-					'max_count' => 4,
-					'ignored_flag' => [],
-					'ignored_region' => []
+					'max-size' => 5000,
+					'max-count' => 4,
+					'ignored-flags' => [],
+					'ignored-regions' => []
 				];
 			}
 		}else{
@@ -378,7 +381,7 @@ class Manager extends PluginBase{
 		$y = [min($pos1->getY(), $pos2->getY()), max($pos1->getY(), $pos2->getY())];
 		$z = [min($pos1->getZ(), $pos2->getZ()), max($pos1->getZ(), $pos2->getZ())];
 
-		if($this->getValue('full_height', 'config') === true){
+		if($this->getValue('full-height', 'config') === true){
 			$y = [0, 1];
 		}
 
@@ -389,7 +392,7 @@ class Manager extends PluginBase{
 	 * @return string[]
 	 */
 	public function getAllowedFlag() : array{
-		$list = array_map('strtolower', $this->getValue('allowed_flag', 'config'));
+		$list = array_map('strtolower', $this->getValue('allowed-flags', 'config'));
 
 		foreach($list as $flag){
 			if(isset(self::DEFAULT_FLAG[$flag])){
@@ -407,7 +410,7 @@ class Manager extends PluginBase{
 			return;
 		}
 
-		switch($this->getValue('warn_type', 'config')){
+		switch($this->getValue('notification-type', 'config')){
 			case 0:
 				$player->sendPopup($message);
 				break;
@@ -444,17 +447,9 @@ class Manager extends PluginBase{
 	private function initProvider(){
 		$folder = $this->getDataFolder();
 
-		if(!is_dir($folder)){
-			@mkdir($folder);
-		}
-
-		$this->saveResource('group.yml');
-		$this->saveResource('config.yml');
-		$this->saveResource('message.yml');
-
 		$this->group = new Config($folder . 'group.yml');
 		$this->config = new Config($folder . 'config.yml');
-		$this->message = new Config($folder . 'message.yml');
+		$this->message = new Config($folder . 'messages-' . $this->config->get('language') . '.yml');
 
 		$this->sign = new Config($folder . 'sign.json');
 		$this->region = new Config($folder . 'region.json');
@@ -504,7 +499,7 @@ class Manager extends PluginBase{
 		];
 
 		foreach($list as $extension){
-			if($this->getValue('allow_' . strtolower($extension), 'config') === true){
+			if($this->getValue(strtolower($extension) . '-support', 'config') === true){
 				$plugin = $this->getServer()->getPluginManager()->getPlugin($extension);
 
 				if(isset($plugin)){

@@ -44,7 +44,7 @@ class BlockListener{
 		$region = $api->getRegion($position);
 
 		if(!isset($region)){
-			if($api->getValue('safe_mode', 'config') === true){
+			if($api->getValue('safe-mode', 'config') === true){
 				if(isset($player)){
 					if($player->hasPermission('sexguard.all')){
 						return false;
@@ -73,8 +73,8 @@ class BlockListener{
 		if(isset($player)){
 			$val = $api->getGroupValue($player);
 
-			if(in_array($flag, $val['ignored_flag'])){
-				if(!in_array($region->getRegionName(), $val['ignored_region'])){
+			if(in_array($flag, $val['ignored-flags'])){
+				if(!in_array($region->getRegionName(), $val['ignored-regions'])){
 					$event = new FlagIgnoreEvent($api, $region, $flag, $player);
 					$event->call();
 

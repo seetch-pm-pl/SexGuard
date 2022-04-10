@@ -54,8 +54,8 @@ class EntityListener{
 		if(($entity instanceof Player)){
 			$val = $api->getGroupValue($entity);
 
-			if(in_array($flag, $val['ignored_flag'])){
-				if(!in_array($region->getRegionName(), $val['ignored_region'])){
+			if(in_array($flag, $val['ignored-flags'])){
+				if(!in_array($region->getRegionName(), $val['ignored-regions'])){
 					$event = new FlagIgnoreEvent($api, $region, $flag, $entity);
 					$event->call();
 

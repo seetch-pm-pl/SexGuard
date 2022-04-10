@@ -43,7 +43,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		$api = $this->getPlugin();
 
 		if($block->getId() == BlockLegacyIds::SIGN_POST or $block->getId() == BlockLegacyIds::WALL_SIGN){
-			if(count($api->sign->getAll()) == 0 or $api->getValue('allow_sell', 'config') === false){
+			if(count($api->sign->getAll()) == 0 or $api->getValue('region-sell', 'config') === false){
 				return;
 			}
 
@@ -84,8 +84,8 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 
 					$val = $api->getGroupValue($player);
 
-					if(count($api->getRegionList($nick)) > $val['max_count']){
-						$api->sendWarning($player, str_replace('{max_count}', (string) $val['max_count'], $api->getValue('rg_overcount')));
+					if(count($api->getRegionList($nick)) > $val['max-count']){
+						$api->sendWarning($player, str_replace('{max_count}', (string) $val['max-count'], $api->getValue('rg_overcount')));
 						return;
 					}
 
@@ -168,8 +168,8 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 				$val = $api->getGroupValue($player);
 				$size = $api->calculateSize($api->position[0][$nick], $clickedBlockPos);
 
-				if($size > $val['max_size'] and !$player->hasPermission('sexguard.all')){
-					$msg = str_replace('{max_size}', (string) $val['max_size'], $api->getValue('rg_oversize'));
+				if($size > $val['max-size'] and !$player->hasPermission('sexguard.all')){
+					$msg = str_replace('{max_size}', (string) $val['max-size'], $api->getValue('rg_oversize'));
 
 					$api->sendWarning($player, $msg);
 					return;

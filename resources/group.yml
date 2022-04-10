@@ -1,44 +1,9 @@
-###               ____                    _
-#  ____ _____  __/ ___\_   _  __ _ _ ____| |
-# / __// _ \ \/ / /  _| | | |/ _' | '_/ _' |
-# \__ \  __/>  <\ \_| | |_| | (_) | || (_) |
-# /___/\___/_/\_\\____/\___/ \__,_|_| \__,_|
-#
-#         GROUP CONFIGURATION FILE
-###
-# ПРИМЕР ДОБАВЛЕНИЯ НОВОЙ ГРУППЫ:
-# <название_группы_в_нижнем_регистре>:
-#   max_size: <максимальный_размер_одного_региона>
-#   max_count: <максимальное_количество_регионов>
-#   ignored_flag: <список_игнорируемых_флагов>
-#   ignored_region: <список_недоступных_регионов>
-# vip:
-#   max_size: 20000
-#   max_count: 4
-#   ignored_flag:
-#   - pvp
-#   - chat
-#   - interact
-#   ignored_region:
-#   - spawn
-#   - arena
-# Таким образом, игроки с группой vip
-# могут создать 4 региона по 20000 блоков
-# каждый. При этом им не будет запрещено
-# драться, писать в чат и интерактировать
-# с объектами в чужих регионах.
-# Но игнорирование флагов будет отменено
-# в регионах с названием spawn и arena.
-###
-# ВНИМАНИЕ:
-#   Группа default используется по-умолчанию
-#   для всех невписанных групп, а так же для
-#   всех игроков без полного доступа при
-#   выключенной связи с PurePerms и UniGroup.
-#   Удаление этого пункта может привести
-#   к неправильной работе плагина.
+---
+# The default group is used by default for all non-inscribed groups, as well as for all players without full access when communication with PurePerms, UniversalGroup and SexGroup is disabled.
+# Deleting this item may cause the plugin to malfunction.
 default:
-  max_size: 5000
-  max_count: 4
-  ignored_flag: []
-  ignored_region: []
+  max-size: 5000
+  max-count: 4
+  ignored-flags: []
+  ignored-regions: []
+...

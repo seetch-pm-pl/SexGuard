@@ -60,8 +60,8 @@ class PositionArgument extends Argument{
 			$val = $main->getGroupValue($sender);
 			$size = $main->calculateSize($main->position[0][$nick], $pos);
 
-			if($size > $val['max_size'] and !$sender->hasPermission('sexguard.all')){
-				$sender->sendMessage(str_replace('{max_size}', $val['max_size'], $main->getValue('rg_oversize')));
+			if($size > $val['max-size'] and !$sender->hasPermission('sexguard.all')){
+				$sender->sendMessage(str_replace('{max_size}', $val['max-size'], $main->getValue('rg_oversize')));
 				return false;
 			}
 
