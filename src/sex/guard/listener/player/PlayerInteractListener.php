@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\player;
 
+use econ\api\EconAPI;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\tile\ItemFrame;
 use pocketmine\block\VanillaBlocks;
@@ -61,6 +62,11 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 						$money = $economy->getMoney($nick);
 					}
 
+					if(isset($api->extension['econ'])){
+						$economy = EconAPI::getInstance();
+						$money = $economy->get($nick);
+					}
+
 					if(!isset($economy)){
 						return;
 					}
@@ -90,8 +96,14 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 						return;
 					}
 
-					$economy->reduceMoney($nick, $price);
-					$economy->addMoney($region->getOwner(), $price);
+					if($economy instanceof EconAPI){
+						$economy->deduct($nick, $price);
+						$economy->add($region->getOwner(), $price);
+					}else{
+						$economy->reduceMoney($nick, $price);
+						$economy->addMoney($region->getOwner(), $price);
+					}
+
 
 					$region->setOwner($nick);
 					$clickedBlockPos->getWorld()->setBlock($pos, VanillaBlocks::AIR());

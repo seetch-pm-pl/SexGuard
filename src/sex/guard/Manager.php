@@ -19,7 +19,7 @@ use sex\guard\listener\player\PlayerListener;
 
 class Manager extends PluginBase{
 
-	const CONFIGURATION_SIGN = '5bfa52e5eed0d57dee1f33cd435eb988';
+	const CONFIGURATION_SIGN = 'U2V4R3VhcmQtMS4zLjM=';
 
 	const DEFAULT_FLAG = [
 		'interact' => true,
@@ -499,7 +499,8 @@ class Manager extends PluginBase{
 			'EconomyAPI',
 			'UniversalGroup',
 			'UniversalMoney',
-			'SexGroup'
+			'SexGroup',
+			'Econ'
 		];
 
 		foreach($list as $extension){

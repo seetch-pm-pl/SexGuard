@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace sex\guard\command\argument;
 
+use econ\api\EconAPI;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 
@@ -97,12 +98,21 @@ class CreateArgument extends Argument{
 				$money = $economy->getMoney($nick);
 			}
 
+			if(isset($main->extension['econ'])){
+				$economy = EconAPI::getInstance();
+				$money = $economy->get($nick);
+			}
+
 			if(isset($economy)){
 				if(!$sender->hasPermission('sexguard.all')){
 					$price = $main->getValue('price', 'config');
 
 					if($money >= $price){
-						$economy->reduceMoney($nick, $price);
+						if($economy instanceof EconAPI){
+							$economy->deduct($nick, $price);
+						}else{
+							$economy->reduceMoney($nick, $price);
+						}
 					}else{
 						$sender->sendMessage(str_replace('{price}', $price, $main->getValue('player_have_not_money')));
 						return false;
