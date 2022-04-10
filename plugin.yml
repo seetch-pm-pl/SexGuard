@@ -1,11 +1,10 @@
 name: SexGuard
-main: sex\guard\Manager
 version: 1.3.3
+main: sex\guard\Manager
 api: 4.0.0
-
-author: sex_KAMAZ
-website: https://vk.com/infernopage
-
+authors:
+  - sex_KAMAZ
+  - seetch
 load: POSTWORLD
 
 commands:
