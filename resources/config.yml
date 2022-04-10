@@ -1,6 +1,6 @@
 ---
 # Configuration version, don't edit this.
-config-version: 1.4.0
+config-version: 1.4.1
 
 language: ru
 
@@ -15,6 +15,9 @@ sexgroup-support: false
 economyapi-support: false
 universalmoney-support: false
 econ-support: false
+
+# The visual selection of the region when selecting by default
+show-selection: true
 
 # Allow owners to sell their regions through a sign. Relevant for creating hotels.
 # Sign format:

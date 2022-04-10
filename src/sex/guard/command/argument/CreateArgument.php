@@ -7,6 +7,7 @@ namespace sex\guard\command\argument;
 use econ\api\EconAPI;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
+use sex\guard\utils\HighlightingManager;
 
 class CreateArgument extends Argument{
 
@@ -120,6 +121,8 @@ class CreateArgument extends Argument{
 				}
 			}
 		}
+
+		$main->updateSelection($sender);
 
 		$main->createRegion($nick, $name, $min, $max);
 		$sender->sendMessage(str_replace('{region}', $name, $main->getValue('rg_create')));

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace sex\guard;
 
+use pocketmine\block\tile\TileFactory;
+use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\world\Position;
+use pocketmine\world\World;
 use sex\guard\command\GuardCommand;
 use sex\guard\data\Region;
 use sex\guard\event\region\RegionCreateEvent;
@@ -15,6 +18,8 @@ use sex\guard\event\region\RegionRemoveEvent;
 use sex\guard\listener\block\BlockListener;
 use sex\guard\listener\entity\EntityListener;
 use sex\guard\listener\player\PlayerListener;
+use sex\guard\utils\CompoundTile;
+use sex\guard\utils\HighlightingManager;
 
 class Manager extends PluginBase{
 
@@ -51,6 +56,7 @@ class Manager extends PluginBase{
 
 	/** @var Position[] */
 	public array $position = [];
+	public array $structure = [];
 
 	/** @var PluginBase[] */
 	public array $extension = [];
@@ -72,6 +78,8 @@ class Manager extends PluginBase{
 			$this->getLogger()->warning("An outdated config was provided...");
 			$this->getServer()->getPluginManager()->disablePlugin($this);
 		}
+
+		TileFactory::getInstance()->register(CompoundTile::class);
 
 		$this->initListener();
 		$this->initCommand();
@@ -339,11 +347,7 @@ class Manager extends PluginBase{
 		$error = "Configuration error: пункт '$key' не найден в $type.yml. Пожалуйста, удалите старый конфиг (/plugins/sexGuard/$type.yml) и перезагрузите сервер.";
 
 		if($type == 'config'){
-			$value = $this->config->get($key, '342');
-
-			if($value == 342){
-				$this->getLogger()->error($error);
-			}
+			$value = $this->config->get($key);
 		}elseif($type == 'group'){
 			$value = $this->group->get($key);
 			$value = !$value ? $this->group->get('default') : $value;
@@ -506,6 +510,33 @@ class Manager extends PluginBase{
 					$this->extension[strtolower($extension)] = $plugin;
 				}
 			}
+		}
+	}
+
+	public function updateSelection(Player $player, Position $origPos1 = null, Position $origPos2 = null) : void{
+		if($origPos1 == null || $origPos2 == null){
+			if(isset($main->structure[$player->getName()])){
+				HighlightingManager::clear($player->getName(), $main->structure[$player->getName()]);
+			}
+			return;
+		}
+
+		if($this->getValue('show-selection', 'config') == true){
+			$minX = min($origPos1->getX(), $origPos2->getX());
+			$maxX = max($origPos1->getX(), $origPos2->getX());
+			$minY = max(min($origPos1->getY(), $origPos2->getY()), World::Y_MIN);
+			$maxY = min(max($origPos1->getY(), $origPos2->getY()), World::Y_MAX - 1);
+			$minZ = min($origPos1->getZ(), $origPos2->getZ());
+			$maxZ = max($origPos1->getZ(), $origPos2->getZ());
+
+			$pos1 = new Vector3($minX, $minY, $minZ);
+			$pos2 = new Vector3($maxX, $maxY, $maxZ);
+
+			if(isset($this->structure[$player->getName()])){
+				HighlightingManager::clear($player->getName(), $this->structure[$player->getName()]);
+			}
+
+			$this->structure[$player->getName()] = HighlightingManager::highlightStaticCube($player->getName(), $player->getWorld()->getFolderName(), $pos1, $pos2, new Vector3(floor(($pos2->getX() + $pos1->getX()) / 2), World::Y_MIN, floor(($pos2->getZ() + $pos1->getZ()) / 2)));
 		}
 	}
 }

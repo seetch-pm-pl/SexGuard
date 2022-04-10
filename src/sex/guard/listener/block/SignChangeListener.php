@@ -52,9 +52,9 @@ class SignChangeListener extends BlockListener implements Listener{
 			return;
 		}
 
-		$sign = $api->sign->get($rname, 55);
+		$sign = $api->sign->get($rname, 'default');
 
-		if($sign !== 55){
+		if($sign !== 'default'){
 			$pos = $sign['pos'];
 
 			if($pos[0] !== $blockPos->getX() or $pos[1] !== $blockPos->getY() or $pos[2] !== $blockPos->getZ()){

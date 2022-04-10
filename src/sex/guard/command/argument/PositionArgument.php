@@ -67,6 +67,8 @@ class PositionArgument extends Argument{
 
 			$main->position[1][$nick] = $pos;
 
+			$main->updateSelection($sender, $main->position[0][$nick], $main->position[1][$nick]);
+
 			$sender->sendMessage($main->getValue('pos_2_set'));
 			return true;
 		}else{

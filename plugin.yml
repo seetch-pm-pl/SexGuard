@@ -1,5 +1,5 @@
 name: SexGuard
-version: 1.4.0
+version: 1.4.1
 main: sex\guard\Manager
 api: 4.0.0
 authors:
