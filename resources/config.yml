@@ -1,8 +1,8 @@
 ---
 # Configuration version, don't edit this.
-config-version: 1.4.2
+config-version: 1.4.3
 
-language: ru
+language: en
 
 # The support of the Permission Manager plugin allows you to determine the size and number of regions for each (or separate) of its groups.
 # Otherwise, the default element in group.yml will be used for all players.

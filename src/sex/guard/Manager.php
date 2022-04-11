@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace sex\guard;
 
+use Exception;
+use JsonException;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
+use pocketmine\utils\VersionString;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use sex\guard\command\GuardCommand;
@@ -18,6 +21,7 @@ use sex\guard\event\region\RegionRemoveEvent;
 use sex\guard\listener\block\BlockListener;
 use sex\guard\listener\entity\EntityListener;
 use sex\guard\listener\player\PlayerListener;
+use sex\guard\task\CheckUpdateTask;
 use sex\guard\utils\CompoundTile;
 use sex\guard\utils\HighlightingManager;
 
@@ -75,8 +79,19 @@ class Manager extends PluginBase{
 		$this->initProvider();
 
 		if($this->getDescription()->getVersion() !== $this->getValue('config-version', 'config')){
-			$this->getLogger()->warning("An outdated config was provided...");
-			$this->getServer()->getPluginManager()->disablePlugin($this);
+			$this->getLogger()->warning("An outdated config was provided attempting to generate a new one...");
+			if(!rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml")){
+				$this->getLogger()->critical("An unknown error occurred while attempting to generate the new config");
+				$this->getServer()->getPluginManager()->disablePlugin($this);
+			}
+			$this->reloadConfig();
+
+			try{
+				$this->getConfig()->set("config-version", $this->getDescription()->getVersion());
+				$this->getConfig()->save();
+			}catch(JsonException $e){
+				$this->getLogger()->critical("An error occurred while attempting to generate the new config, " . $e->getMessage());
+			}
 		}
 
 		TileFactory::getInstance()->register(CompoundTile::class);
@@ -84,6 +99,12 @@ class Manager extends PluginBase{
 		$this->initListener();
 		$this->initCommand();
 		$this->initExtension();
+
+		try{
+			$this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask);
+		}catch(Exception $ex){
+			$this->getLogger()->warning($ex->getMessage());
+		}
 	}
 
 	protected function onDisable() : void{
@@ -537,6 +558,30 @@ class Manager extends PluginBase{
 		if(isset($this->structure[$player->getName()])){
 			HighlightingManager::clear($player->getName(), $this->structure[$player->getName()]);
 			unset($this->structure[$player->getName()]);
+		}
+	}
+
+	public function compareVersion(bool $success, ?VersionString $new = null, string $url = "") : void{
+		if($success){
+			$current = new VersionString($this->getDescription()->getVersion());
+			switch($current->compare($new)){
+				case -1:
+					$this->getLogger()->warning("This version is under development. There may be many fatal bugs.");
+					break;
+
+				case 0:
+					$this->getLogger()->notice("You are using the development version, there may be many fatal errors.");
+					break;
+
+				case 1:
+					$messages = [
+						"Your version of {$current->getFullVersion()} is out of date. Version {$new->getBaseVersion()} was released!",
+						"Download: {$url}"
+					];
+					foreach($messages as $message) $this->getLogger()->notice($message);
+			}
+		}else{
+			$this->getLogger()->notice("Because there was a problem with the network, we could not confirm whether there was an update.");
 		}
 	}
 }
