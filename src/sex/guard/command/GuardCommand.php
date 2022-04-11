@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace sex\guard\command;
 
+use core\utils\TextUtils;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -81,7 +82,7 @@ class GuardCommand extends Command{
 		$argument = $this->getArgument(array_shift($args));
 
 		if(!isset($argument)){
-			$sender->sendMessage($main->getValue('rg_help'));
+			$sender->sendMessage($main->getValue('no_argument'));
 			return false;
 		}
 

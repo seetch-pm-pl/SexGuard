@@ -38,6 +38,7 @@ class PositionArgument extends Argument{
 
 		if($args[0] == '1'){
 			if(isset($main->position[1][$nick])){
+				$main->clearSelection($sender);
 				unset($main->position[1][$nick]);
 			}
 
@@ -72,7 +73,6 @@ class PositionArgument extends Argument{
 			$sender->sendMessage($main->getValue('pos_2_set'));
 			return true;
 		}else{
-
 			$sender->sendMessage($main->getValue('pos_help'));
 			return false;
 		}

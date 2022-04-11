@@ -154,8 +154,6 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			if(!isset($api->position[0][$nick])){
 				$api->position[0][$nick] = $clickedBlockPos;
 
-				$api->updateSelection($player, $api->position[0][$nick]);
-
 				$api->sendWarning($player, $api->getValue('pos_1_set'));
 				return;
 			}
@@ -179,16 +177,16 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 
 				$api->position[1][$nick] = $clickedBlockPos;
 
-				$api->updateSelection($player, $api->position[0][$nick], $api->position[1][$nick]);
-
 				$api->sendWarning($player, $api->getValue('pos_2_set'));
+
+				$api->updateSelection($player, $api->position[0][$nick], $api->position[1][$nick]);
 				return;
 			}
 
 			if(isset($api->position[0][$nick]) and isset($api->position[1][$nick])){
 				$api->position[0][$nick] = $clickedBlockPos;
 
-				$api->updateSelection($player, $api->position[0][$nick]);
+				$api->clearSelection($player);
 
 				unset($api->position[1][$nick]);
 				$api->sendWarning($player, $api->getValue('pos_1_set'));

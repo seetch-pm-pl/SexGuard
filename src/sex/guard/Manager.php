@@ -513,14 +513,7 @@ class Manager extends PluginBase{
 		}
 	}
 
-	public function updateSelection(Player $player, Position $origPos1 = null, Position $origPos2 = null) : void{
-		if($origPos1 == null || $origPos2 == null){
-			if(isset($main->structure[$player->getName()])){
-				HighlightingManager::clear($player->getName(), $main->structure[$player->getName()]);
-			}
-			return;
-		}
-
+	public function updateSelection(Player $player, Position $origPos1, Position $origPos2) : void{
 		if($this->getValue('show-selection', 'config') == true){
 			$minX = min($origPos1->getX(), $origPos2->getX());
 			$maxX = max($origPos1->getX(), $origPos2->getX());
@@ -537,6 +530,13 @@ class Manager extends PluginBase{
 			}
 
 			$this->structure[$player->getName()] = HighlightingManager::highlightStaticCube($player->getName(), $player->getWorld()->getFolderName(), $pos1, $pos2, new Vector3(floor(($pos2->getX() + $pos1->getX()) / 2), World::Y_MIN, floor(($pos2->getZ() + $pos1->getZ()) / 2)));
+		}
+	}
+
+	public function clearSelection(Player $player) : void{
+		if(isset($this->structure[$player->getName()])){
+			HighlightingManager::clear($player->getName(), $this->structure[$player->getName()]);
+			unset($this->structure[$player->getName()]);
 		}
 	}
 }

@@ -12,7 +12,8 @@
 #   no_console: отправка команды из консоли
 #   no_permission: недостаточно прав для отправки команды
 no_console: "§l§c- §fGUARD §c- Консоль сосет§r"
-no_permission: "§l§c- §fGUARD §c- Недостаточно прав$r"
+no_permission: "§l§c- §fGUARD §c- Недостаточно прав§r"
+no_argument: "§l§c- §fGUARD §c- Аргумент не найден§r"
 ###
 #   player_not_exist: указанный игрок не найден
 #   player_not_owner: требуются права создателя региона
