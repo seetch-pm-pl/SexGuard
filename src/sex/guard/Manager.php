@@ -566,11 +566,11 @@ class Manager extends PluginBase{
 			$current = new VersionString($this->getDescription()->getVersion());
 			switch($current->compare($new)){
 				case -1:
-					$this->getLogger()->warning("This version is under development. There may be many fatal bugs.");
+					$this->getLogger()->warning("You are using the development version, there may be many fatal errors.");
 					break;
 
 				case 0:
-					$this->getLogger()->notice("You are using the development version, there may be many fatal errors.");
+					$this->getLogger()->notice("You are using a stable version, no update is required.");
 					break;
 
 				case 1:
