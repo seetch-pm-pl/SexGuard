@@ -34,7 +34,6 @@ class CheckUpdateTask extends AsyncTask{
 		$plugin = Manager::getInstance();
 		if($plugin->isEnabled()){
 			$data = $this->getResult();
-			var_dump($data[0]["name"]);
 			if(isset($data[0])){
 				$ver = new VersionString(explode(" ", $data[0]["name"])[1]);
 				$plugin->compareVersion(true, $ver, $data[0]["html_url"]);
