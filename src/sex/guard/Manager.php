@@ -456,10 +456,8 @@ class Manager extends PluginBase{
 	public function getGroupValue(Player $player) : array{
 		if(isset($this->extension['pureperms'])){
 			$group = $this->extension['pureperms']->getUserDataMgr()->getGroup($player)->getName();
-		}elseif(isset($this->extension['universalgroup'])){
-			$group = $this->extension['universalgroup']->getGroup($player->getName())->getId();
-		}elseif(isset($this->extension['sexgroup'])){
-			$group = $this->extension['sexgroup']->getPlayerGroup($player->getName())->getId();
+		}elseif(isset($this->extension['groupsapi'])){
+			$group = $this->extension['groupsapi']->getMemberManager()->getMember($player->getName())->getHighestGroup()->getName();
 		}
 
 		return $this->getValue($group ?? 'default', 'group');
@@ -516,10 +514,8 @@ class Manager extends PluginBase{
 	private function initExtension() : void{
 		$list = [
 			'PurePerms',
+			'GroupsAPI',
 			'EconomyAPI',
-			'UniversalGroup',
-			'UniversalMoney',
-			'SexGroup',
 			'Econ'
 		];
 
@@ -570,7 +566,7 @@ class Manager extends PluginBase{
 					break;
 
 				case 0:
-					$this->getLogger()->notice("You are using a stable version, no update is required.");
+					$this->getLogger()->debug("You are using a stable version, no update is required.");
 					break;
 
 				case 1:

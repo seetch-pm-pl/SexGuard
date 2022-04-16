@@ -57,11 +57,6 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 						$money = $economy->myMoney($nick);
 					}
 
-					if(isset($api->extension['universalmoney'])){
-						$economy = $api->extension['universalmoney'];
-						$money = $economy->getMoney($nick);
-					}
-
 					if(isset($api->extension['econ'])){
 						$economy = EconAPI::getInstance();
 						$money = $economy->get($nick);

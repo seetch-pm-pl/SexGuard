@@ -94,11 +94,6 @@ class CreateArgument extends Argument{
 				$money = $economy->myMoney($nick);
 			}
 
-			if(isset($main->extension['universalmoney'])){
-				$economy = $main->extension['universalmoney'];
-				$money = $economy->getMoney($nick);
-			}
-
 			if(isset($main->extension['econ'])){
 				$economy = EconAPI::getInstance();
 				$money = $economy->get($nick);
