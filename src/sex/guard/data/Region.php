@@ -85,7 +85,7 @@ class Region{
 	}
 
 	public function getRegionName() : string{
-		return strtolower($this->name);
+		return strtolower((string) $this->name);
 	}
 
 	public function getOwner() : string{

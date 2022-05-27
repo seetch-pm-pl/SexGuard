@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\player;
 
-use econ\api\EconAPI;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\tile\ItemFrame;
 use pocketmine\block\VanillaBlocks;
@@ -12,6 +11,10 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
+use pocketmine\scheduler\ClosureTask;
+use pocketmine\world\Position;
+use seetch\api\utils\Message;
+use econ\api\EconAPI;
 
 class PlayerInteractListener extends PlayerListener implements Listener{
 
@@ -131,6 +134,15 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			$msg = str_replace('{member}', implode(' ', $region->getMemberList()), $msg);
 
 			$api->sendWarning($player, $msg);
+
+			$pos1 = new Vector3($region->getMin("x"), $region->getMin("y"), $region->getMin("z"));
+			$pos2 = new Vector3($region->getMax("x"), $region->getMax("y"), $region->getMax("z"));
+
+			$this->getPlugin()->updateSelection($player, Position::fromObject($pos1, $player->getWorld()), Position::fromObject($pos2, $player->getWorld()));
+
+			$this->getPlugin()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player){
+				$this->getPlugin()->clearSelection($player);
+			}), 60);
 			return;
 		}
 
@@ -191,7 +203,13 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 
 		$flag = 'interact';
 
-		if($block->getId() == BlockLegacyIds::CHEST){
+		if($block->getId() == BlockLegacyIds::CHEST ||
+			$block->getId() == BlockLegacyIds::SMOKER ||
+			$block->getId() == BlockLegacyIds::BARREL ||
+			$block->getId() == BlockLegacyIds::SHULKER_BOX ||
+			$block->getId() == BlockLegacyIds::BLAST_FURNACE ||
+			$block->getId() == BlockLegacyIds::UNDYED_SHULKER_BOX
+		){
 			$flag = 'chest';
 		}
 
