@@ -10,7 +10,6 @@ class RemoveArgument extends Argument{
 
 	public const NAME = 'remove';
 
-
 	public function execute(Player $sender, array $args) : bool{
 		$nick = strtolower($sender->getName());
 		$main = $this->getPlugin();

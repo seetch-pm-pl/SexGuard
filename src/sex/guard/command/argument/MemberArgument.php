@@ -7,6 +7,7 @@ namespace sex\guard\command\argument;
 use pocketmine\player\Player;
 
 class MemberArgument extends Argument{
+
 	public const NAME = 'member';
 
 	public function execute(Player $sender, array $args) : bool{

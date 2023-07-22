@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\block;
 
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BaseSign;
+use pocketmine\block\VanillaBlocks;
+use pocketmine\block\WallSign;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\math\Vector3;
@@ -25,12 +27,12 @@ class BlockBreakListener extends BlockListener implements Listener{
 			return;
 		}
 
-		if($block->getId() == BlockLegacyIds::CHEST and $this->isFlagDenied($blockPos, 'chest', $player)){
+		if($block === VanillaBlocks::CHEST() and $this->isFlagDenied($blockPos, 'chest', $player)){
 			$event->cancel();
 			return;
 		}
 
-		if($block->getId() !== BlockLegacyIds::SIGN_POST and $block->getId() !== BlockLegacyIds::WALL_SIGN){
+		if($block instanceof BaseSign and !($block instanceof WallSign)){
 			return;
 		}
 

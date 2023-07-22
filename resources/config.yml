@@ -15,7 +15,7 @@ economyapi-support: false
 econ-support: false
 
 # The visual selection of the region when selecting by default
-show-selection: true
+show-selection: false
 
 # Allow owners to sell their regions through a sign. Relevant for creating hotels.
 # Sign format:

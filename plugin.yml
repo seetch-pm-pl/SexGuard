@@ -1,7 +1,7 @@
 name: SexGuard
 version: 1.5.1
 main: sex\guard\Manager
-api: 4.0.0
+api: 5.0.0
 authors:
   - sex_KAMAZ
   - seetch
@@ -9,15 +9,15 @@ load: POSTWORLD
 
 commands:
   rg:
-    description: 'Показывает помощь или список команд управления регионами'
+    description: 'Shows help or a list of region management commands'
     permission: 'sexguard.command.rg'
 
 permissions:
   sexguard.command.rg:
     default: true
   sexguard.noflag:
-    description: 'Игнорирование флагов внутри регионов'
+    description: 'Ignoring flags within regions'
     default: op
   sexguard.all:
-    description: 'Доступ ко всем функциям sexGuard'
+    description: 'Access to all SexGuard functions'
     default: op

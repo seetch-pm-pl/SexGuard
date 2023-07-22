@@ -15,7 +15,7 @@ class BlockPlaceListener extends BlockListener implements Listener{
 		}
 
 		$player = $event->getPlayer();
-		$block = $event->getBlock();
+		$block = $event->getBlockAgainst();
 		$blockPos = $block->getPosition();
 
 		if($this->isFlagDenied($blockPos, 'place', $player)){

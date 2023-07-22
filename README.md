@@ -1,6 +1,6 @@
 # SexGuard
 
-🛡️ Protect your PocketMine server and lets players claim regions.
+🛡️ Protect your PocketMine-MP server and lets players claim regions.
 <br>
 
 ### Features

@@ -6,156 +6,156 @@
 #
 #            MAIN LANGUAGE FILE
 ###
-# Оставьте строку пустой, и сообщение не отправится.
+# Leave the line blank and the message will not be sent.
 ###
-# ОБЩИЕ СООБЩЕНИЯ ОБ ОШИБКАХ:
-#   no_console: отправка команды из консоли
-#   no_permission: недостаточно прав для отправки команды
+# GENERAL ERROR MESSAGES:
+# no_console: sending a command from the console
+# no_permission: insufficient permissions to send the command
 no_console: "§l§c- §fGUARD §c- The console sucks§r"
 no_permission: "§l§c- §fGUARD §c- Not enough rights§r"
 no_argument: "§l§c- §fGUARD §c- Argument not found§r"
 ###
-#   player_not_exist: указанный игрок не найден
-#   player_not_owner: требуются права создателя региона
-#   player_already_owner: игрок уже владеет данным регионом
-#   player_buy_rg: игрок купил регион
-#   player_have_not_money: недостаточно средств для покупки
+# player_not_exist: the specified player was not found
+# player_not_owner: region creator rights required
+# player_already_owner: the player already owns this region
+# player_buy_rg: the player bought the region
+# player_have_not_money: not enough funds to buy
 player_not_exist: "§l§c- §fGUARD §c- The specified player was not found§r"
 player_not_owner: "§l§c- §fGUARD §c- You do not own this region§r"
 player_already_owner: "§l§c- §fGUARD §c- You already own this region§r"
 #
-# {region} - регион
+# {region} - region
 player_buy_rg: "§l§a- §fGUARD §a- You have purchased a region {region}§r"
 #
-# {price} - цена региона
+# {price} - the price of the region
 player_have_not_money: "§l§c- §fGUARD §c- Requires {price} to purchase§r"
 ###
-#   rg_exist: указанный регион принадлежит другому игроку
-#   rg_not_exist: указанный регион еще не создан
-#   rg_oversize: регион слишком большой
-#   rg_override: регион пересекает чужой
-#   rg_overcount: превышено количество регионов на игрока
-#   rg_help: меню помощи по командам
+# rg_exist: the specified region belongs to another player
+# rg_not_exist: the specified region has not been created yet
+# rg_oversize: the region is too large
+# rg_override: a region crosses someone else's
+# rg_overcount: exceeded the number of regions per player
+# rg_help: command help menu
 rg_exist: "§l§c- §fGUARD §c- The specified region already exists§r"
 rg_not_exist: "§l§c- §fGUARD §c- Region not found§r"
 #
-# {max_count} - максимальный размер региона
+# {max_count} - the maximum size of the region
 rg_oversize: "§l§c- §fGUARD §c- Maximum size: {max_size} blocks§r"
 rg_override: "§l§c- §fGUARD §c- The position crosses a foreign region§r"
 #
-# {max_count} - максимальное количество регионов
+# {max_count} - maximum number of regions
 rg_overcount: "§l§c- §fGUARD §c- Maximum number of regions: {max_count}§r"
 rg_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg wand §7- §faxe for selection§r\n§l§e• §f/rg pos §7- §fset positions§r\n§l§e• §f/rg create §7- §fcreate a region§r\n§l§e• §f/rg member §7- §fmanaging members§r\n§l§e• §f/rg owner §7- §fchange owner§r\n§l§e• §f/rg flag §7- §fflag management§r\n§l§e• §f/rg list §7- §flist of regions§r\n§l§e• §f/rg remove §7- §fremove region§r\n§l§o§e__________________________§r"
 
 
 ###
-# СООБЩЕНИЯ ПРИ ВВОДЕ КОМАНД:
-# 1. /rg create <регион>
+# MESSAGES WHEN ENTERING COMMANDS:
+# 1. /rg create <region>
 ###
-#   create_help: помощь по команде
-#   short_name: короткое название
-#   long_name: длинное название
-#   bad_name: плохое название
-#   rg_create: регион успешно создан
+# create_help: command help
+# short_name: short name
+# long_name: long name
+# bad_name: bad name
+# rg_create: the region was created successfully
 create_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg create <region> §7- §fcreate region§r\n§l§e• §f/rg claim <region> §7- §fcreate region§r\n§l§e• §fTo create a region, you need§r\n§l§e• §fSelect its position ( diagonal of the cube )§r\n§l§e• §fMore detailed: /rg pos§r\n§l§o§e__________________________§r"
 short_name: "§l§c- §fGUARD §c- The name of the region is too short§r"
 long_name: "§l§c- §fGUARD §c- The name of the region is too long§r"
 bad_name: "§l§c- §fGUARD §c- Only letters and numbers are allowed§r"
 #
-# {region} - имя региона при создании
+# {region} - the name of the region when creating
 rg_create: "§l§a- §fGUARD §a- Region {region} successfully created§r"
 ###
-# 2. /rg flag <регион> <флаг>
+# 2. /rg flag <region> <flag>
 ###
-#   flag_help: помощь по команде
-#   flag_on: флаг включен
-#   flag_off: флаг выключен
-#   flag_not_exist: указанный флаг не существует
+# flag_help: command help
+# flag_on: enable flag
+# flag_off: the flag is off
+# flag_not_exist: the specified flag does not exist
 #
-# {flag_list} - список всех доступных флагов
+# {flag_list} - list of all available flags
 flag_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg flag <region> <flag> §7- §fchange flag§r\n§l§e• §fFlags are used to prohibit or allow §r\n§l§e• §certain actions within the region§r\n§l§e• §fAvailable flags: {flag_list}§r\n§l§o§e__________________________§r"
 flag_not_exist: "§l§c- §fGUARD §c- The specified flag does not exist§r"
 #
-# {flag} - включенный флаг
+# {flag} - enabled flag
 flag_on: "§l§a- §fGUARD §a- The {flag} flag is enabled§r"
 #
-# {flag} - выключенный флаг
+# {flag} - disabled flag
 flag_off: "§l§c- §fGUARD §c- The {flag} flag is disabled§r"
 ###
 # 3. /rg list
 ###
-#   list_empty: регионов не найдено
-#   list_success: список регионов
+# list_empty: no regions found
+# list_success: list of regions
 list_empty: "§l§c- §fGUARD §c- You don't have a single region§r"
 #
-# {list} - список регионов
+# {list} - list of regions
 list_success: "§l§a- §fGUARD §a- List of your regions: {list}§r"
 ###
-# 4. /rg member [add,remove] <регион> <игрок>
+# 4. /rg member [add,remove] <region> <player>
 ###
-#   member_help: помощь по команде
-#   member_add: игрок добавлен в регион
-#   member_remove: игрок исключен из региона
-#   player_already_member: игрок уже состоит в регионе
+# member_help: team help
+# member_add: player added to region
+# member_remove: player excluded from region
+# player_already_member: the player is already in the region
 member_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg member [add,remove] <region> <player> §7- §fmanaging members§r\n§l§e• §fMembers can change your region§r\n§l§e• §fBut they won't be able to sell or delete it§r\n§l§e• §fBe careful when choosing participants§r\n§l§o§e__________________________§r"
 #
-# {player} - добавленный игрок
+# {player} - added player
 member_add: "§l§a- §fGUARD §a- Player {player} added to the region§r"
 #
-# {player} - исключенный игрок
+# {player} - excluded player
 member_remove: "§l§c- §fGUARD §c- Player {player} removed from the region§r"
 player_already_member: "§l§c- §fGUARD §c- The player is already a member of the region§r"
 ###
-# 5. /rg owner <регион> <игрок>
+# 5. /rg owner <region> <player>
 ###
-#   owner_help: помощь по команде
-#   owner_change: владелец региона изменен
-#   owner_got_region: игрок получил регион
+# owner_help: help on the command
+# owner_change: the owner of the region has been changed
+# owner_got_region: the player got the region
 owner_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg owner <region> <player> §7- §fassign an owner§r\n§l§e• §fFor security reasons, the number of owners§r\n§l§e• §fNo more than 1 player per region§r\n§l§e• §fWhen choosing a new owner, you will become a member§r\n§l§o§e__________________________§r"
 #
-# {region} - регион
-# {player} - новый владелец региона
+# {region} - region
+# {player} - new owner of the region
 owner_change: "§l§a- §fGUARD §a- {player} now owns the region {region}§r"
-# {player} - старый владелец региона
+# {player} - old owner of the region
 owner_got_region: "§l§a- §fGUARD §a- {player} I gave you the region {region}§r"
 ###
 # 6. /rg pos [1,2]
 ###
-#   pos_help: помощь по команде
-#   pos_1_set: позиция 1 установлена
-#   pos_2_set: позиция 2 установлена
-#   pos_another_world: позиции в разных мирах
+# pos_help: command help
+# pos_1_set: position 1 is set
+# pos_2_set: position 2 is set
+# pos_another_world: positions in different worlds
 pos_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg pos [1,2] §7- §fset position§r\n§l§e• §fThe points should be located on opposite sides§r\n§l§e• §fCorners of the cuboid by drawing a diagonal§r\n§l§e• §fAfter installing the points, you will be able to create your own region§r\n§l§o§e__________________________§r"
 pos_1_set: "§l§a- §fGUARD §a- Position 1 is set. Set the position 2§r"
 pos_2_set: "§l§a- §fGUARD §a- Position 2 is set§r"
 pos_another_world: "§l§c- §fGUARD §c- The positions are in different worlds§r"
 ###
-# 7. /rg remove <регион>
+# 7. /rg remove <region>
 ###
-#   remove_help: помощь по команде
-#   rg_remove: регион удален
+# remove_help: help on command
+# rg_remove: region deleted
 remove_help: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §f/rg remove <region> §7- §fremove region§r\n§l§e• §fAfter deleting a region, all participants§r\n§l§e• §fWill lose their membership status§r\n§l§o§e__________________________§r"
 rg_remove: "§l§a- §fGUARD §a- Region deleted§r"
 ###
 # 8. /rg wand
 ###
-#   got_wand: топорик для выделения позиций
-#   inventory_oversize: инвентарь переполнен
+# got_wand: hatchet for highlighting positions
+# inventory_oversize: inventory is full
 got_wand: "§l§o§e--------- §fH E L P §e---------§r\n§l§e• §fYou got an axe for region create§r\n§l§e• §fTo set the position, it is enough§r\n§l§e• §fPress the axe on the desired block§r\n§l§o§e__________________________§r"
 inventory_oversize: "§l§c- §fGUARD §c- Inventory is full§r"
 
 
 ###
-# ИНФОРМАЦИЯ О РЕГИОНЕ:
-# {region} - название региона
-# {owner} - владелец региона
-# {member} - участники региона
+# INFORMATION ABOUT THE REGION:
+# {region} - name of the region
+# {owner} - the owner of the region
+# {member} - members of the region
 rg_info: "§l§e- §fRegion §e- {region} | §e- §fOwner §e- {owner}§r\n§l§e- §fMembers §e- {member}"
 
 ###
-# ТЕКСТ ТАБЛИЧКИ ПРОДАЖИ:
-# {region} - название региона
-# {price} - цена
+# TEXT OF THE SALES SIGN:
+# {region} - name of the region
+# {price} - price
 sell_text_1: "§l§eSale:§r"
 sell_text_2: "§f{region}"
 sell_text_3: "§l§ePrice:§r"
@@ -164,22 +164,22 @@ sell_text_4: "§f{price}"
 sell_exist: "§l§c- §fGUARD §c- The sales plate for this region has already been installed§r"
 
 ###
-# СООБЩЕНИЯ О ЗАПРЕТЕ ДЕЙСТВИЙ:
-#   warn_flag_interact: запрещено нажимать на что-либо
-#   warn_flag_teleport: запрещено телепортироваться
-#   warn_flag_combust: запрещено возгораться (?)
-#   warn_flag_bucket: запрещено использовать ведра
-#   warn_flag_damage: урон от внешнего мира не получен
-#   warn_flag_chest: запрещено использовать сундуки
-#   warn_flag_frame: запрещено использовать рамки
-#   warn_flag_place: запрещено ставить блоки
-#   warn_flag_break: запрещено ломать блоки
-#   warn_flag_sleep: запрещено ложиться в кровать
-#   warn_flag_drop: запрещено выбрасывать вещи
-#   warn_flag_chat: запрещено отправлять сообщения в чат
-#   warn_flag_pvp: запрещено драться с игроками
-#   warn_flag_mob: запрещено драться с мобами
-#   warn_safe_mode: запрещено изменять мир
+# MESSAGES ABOUT THE PROHIBITION OF ACTIONS:
+# warn_flag_interact: it is forbidden to click on anything
+# warn_flag_teleport: it is forbidden to teleport
+# warn_flag_combust: forbidden to catch fire (?)
+# warn_flag_bucket: forbidden to use buckets
+# warn_flag_damage: no damage received from the outside world
+# warn_flag_chest: it is forbidden to use chests
+# warn_flag_frame: it is forbidden to use frames
+# warn_flag_place: it is forbidden to put blocks
+# warn_flag_break: it is forbidden to break blocks
+# warn_flag_sleep: it is forbidden to go to bed
+# warn_flag_drop: it is forbidden to throw things away
+# warn_flag_chat: it is forbidden to send messages to the chat
+# warn_flag_pvp: it is forbidden to fight with players
+# warn_flag_mob: it is forbidden to fight with mobs
+# warn_safe_mode: it is forbidden to change the world
 warn_flag_interact: ""
 warn_flag_teleport: "§l§c- §fGUARD §c- Teleportation in this region is limited§r"
 warn_flag_combust: ""

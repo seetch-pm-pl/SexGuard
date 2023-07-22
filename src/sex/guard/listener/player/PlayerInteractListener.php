@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace sex\guard\listener\player;
 
-use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\FloorSign;
 use pocketmine\block\tile\ItemFrame;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\block\WallSign;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\item\ItemIds;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\Position;
-use seetch\api\utils\Message;
 use econ\api\EconAPI;
 
 class PlayerInteractListener extends PlayerListener implements Listener{
@@ -45,7 +45,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 		$nick = strtolower($player->getName());
 		$api = $this->getPlugin();
 
-		if($block->getId() == BlockLegacyIds::SIGN_POST or $block->getId() == BlockLegacyIds::WALL_SIGN){
+		if($block instanceof FloorSign or $block instanceof WallSign){
 			if(count($api->sign->getAll()) == 0 or $api->getValue('region-sell', 'config') === false){
 				return;
 			}
@@ -119,7 +119,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 
 		$item = $event->getItem();
 
-		if($item->getId() == ItemIds::STICK){
+		if($item === VanillaItems::STICK()){
 			$event->cancel();
 
 			$region = $api->getRegion($clickedBlockPos);
@@ -146,7 +146,7 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 			return;
 		}
 
-		if($item->getId() == ItemIds::WOODEN_AXE){
+		if($item === VanillaItems::WOODEN_AXE()){
 			$event->cancel();
 
 			$region = $api->getRegion($clickedBlockPos);
@@ -203,36 +203,39 @@ class PlayerInteractListener extends PlayerListener implements Listener{
 
 		$flag = 'interact';
 
-		if($block->getId() == BlockLegacyIds::CHEST ||
-			$block->getId() == BlockLegacyIds::SMOKER ||
-			$block->getId() == BlockLegacyIds::BARREL ||
-			$block->getId() == BlockLegacyIds::SHULKER_BOX ||
-			$block->getId() == BlockLegacyIds::BLAST_FURNACE ||
-			$block->getId() == BlockLegacyIds::UNDYED_SHULKER_BOX
+		if($block === VanillaBlocks::CHEST() ||
+			$block === VanillaBlocks::TRAPPED_CHEST() ||
+			$block === VanillaBlocks::SMOKER() ||
+			$block === VanillaBlocks::BARREL() ||
+			$block === VanillaBlocks::SHULKER_BOX() ||
+			$block === VanillaBlocks::BLAST_FURNACE() ||
+			$block === VanillaBlocks::DYED_SHULKER_BOX()
 		){
 			$flag = 'chest';
 		}
 
-		if($block->getId() == BlockLegacyIds::ITEM_FRAME_BLOCK){
+		if($block === VanillaBlocks::ITEM_FRAME()){
 			$flag = 'frame';
 		}
 
-		if($block->getId() == BlockLegacyIds::GRASS){
+		if($block == VanillaBlocks::GRASS()){
 			$list = [
-				ItemIds::WOODEN_SHOVEL,
-				ItemIds::STONE_SHOVEL,
-				ItemIds::IRON_SHOVEL,
-				ItemIds::GOLD_SHOVEL,
-				ItemIds::DIAMOND_SHOVEL,
+				VanillaItems::WOODEN_SHOVEL(),
+				VanillaItems::STONE_SHOVEL(),
+				VanillaItems::IRON_SHOVEL(),
+				VanillaItems::GOLDEN_SHOVEL(),
+				VanillaItems::DIAMOND_SHOVEL(),
+				VanillaItems::NETHERITE_SHOVEL(),
 
-				ItemIds::WOODEN_HOE,
-				ItemIds::STONE_HOE,
-				ItemIds::IRON_HOE,
-				ItemIds::GOLD_HOE,
-				ItemIds::DIAMOND_HOE
+				VanillaItems::WOODEN_HOE(),
+				VanillaItems::STONE_HOE(),
+				VanillaItems::IRON_HOE(),
+				VanillaItems::GOLDEN_HOE(),
+				VanillaItems::DIAMOND_HOE(),
+				VanillaItems::NETHERITE_HOE()
 			];
 
-			if(in_array($item->getId(), $list)){
+			if(in_array($item, $list)){
 				/**
 				 * @todo break?
 				 */

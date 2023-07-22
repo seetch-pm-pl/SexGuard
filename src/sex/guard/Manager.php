@@ -6,14 +6,11 @@ namespace sex\guard;
 
 use Exception;
 use JsonException;
-use pocketmine\block\tile\TileFactory;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\VersionString;
 use pocketmine\world\Position;
-use pocketmine\world\World;
 use sex\guard\command\GuardCommand;
 use sex\guard\data\Region;
 use sex\guard\event\region\RegionCreateEvent;
@@ -22,8 +19,6 @@ use sex\guard\listener\block\BlockListener;
 use sex\guard\listener\entity\EntityListener;
 use sex\guard\listener\player\PlayerListener;
 use sex\guard\task\CheckUpdateTask;
-use sex\guard\utils\CompoundTile;
-use sex\guard\utils\HighlightingManager;
 
 class Manager extends PluginBase{
 
@@ -93,8 +88,6 @@ class Manager extends PluginBase{
 				$this->getLogger()->critical("An error occurred while attempting to generate the new config, " . $e->getMessage());
 			}
 		}
-
-		TileFactory::getInstance()->register(CompoundTile::class);
 
 		$this->initListener();
 		$this->initCommand();
@@ -530,8 +523,9 @@ class Manager extends PluginBase{
 		}
 	}
 
+	// TODO: Next update.
 	public function updateSelection(Player $player, Position $origPos1, Position $origPos2) : void{
-		if($this->getValue('show-selection', 'config') == true){
+		/*if($this->getValue('show-selection', 'config') == true){
 			$minX = min($origPos1->getX(), $origPos2->getX());
 			$maxX = max($origPos1->getX(), $origPos2->getX());
 			$minY = max(min($origPos1->getY(), $origPos2->getY()), World::Y_MIN);
@@ -547,14 +541,15 @@ class Manager extends PluginBase{
 			}
 
 			$this->structure[$player->getName()] = HighlightingManager::highlightStaticCube($player->getName(), $player->getWorld()->getFolderName(), $pos1, $pos2, new Vector3(floor(($pos2->getX() + $pos1->getX()) / 2), World::Y_MIN, floor(($pos2->getZ() + $pos1->getZ()) / 2)));
-		}
+		}*/
 	}
 
+	// TODO: Next update.
 	public function clearSelection(Player $player) : void{
-		if(isset($this->structure[$player->getName()])){
+		/*if(isset($this->structure[$player->getName()])){
 			HighlightingManager::clear($player->getName(), $this->structure[$player->getName()]);
 			unset($this->structure[$player->getName()]);
-		}
+		}*/
 	}
 
 	public function compareVersion(bool $success, ?VersionString $new = null, string $url = "") : void{
